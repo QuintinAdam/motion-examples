@@ -14,5 +14,23 @@ class ColorsController < UIViewController
     self.view.addSubview(@label)
     # for the ui nav bar title
     self.title = "Colors"
+
+    # buttons
+
+    ["red", "green", "blue"].each_with_index do |color_text, index|
+      # create the UIColor, button text, and button callback all with a single color_text variable
+      color = UIColor.send("#{color_text}Color")
+      button_width = 80
+      button = UIButton.buttonWithType(UIButtonTypeSystem)
+      button.setTitle(color_text, forState:UIControlStateNormal)
+      button.setTitleColor(color, forState:UIControlStateNormal)
+      button.sizeToFit
+      # size
+      button.frame = [[30 + index*(button_width + 10), @label.frame.origin.y + button.frame.size.height + 30], [80, button.frame.size.height]]
+      button.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin
+      # touch event
+      button.addTarget(self, action:"tap_#{color_text}", forControlEvents:UIControlEventTouchUpInside)
+      # add to view
+      self.view.addSubview(button)
   end
 end
