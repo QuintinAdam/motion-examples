@@ -25,6 +25,10 @@ class AppDelegate
     # make color detail controller the home view
     top_controller = ColorDetailController.alloc.initWithColor(UIColor.purpleColor)
     top_controller.title = "Top Color"
+
+    # do not bleed the color under the tab bar
+    top_controller.edgesForExtendedLayout = UIRectEdgeNone
+
     top_nav_controller = UINavigationController.alloc.initWithRootViewController(top_controller)
     # add the 2 tabs
     tab_controller.viewControllers = [nav_controller, top_nav_controller]
