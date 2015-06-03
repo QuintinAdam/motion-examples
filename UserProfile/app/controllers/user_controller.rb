@@ -1,4 +1,5 @@
 class UserController < UIViewController
+  include BubbleWrap::KVO
   attr_accessor :user
 
   def initWithUser(user)
