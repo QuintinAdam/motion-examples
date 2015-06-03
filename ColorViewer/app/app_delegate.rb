@@ -22,6 +22,13 @@ class AppDelegate
     tab_controller.viewControllers = [nav_controller]
     @window.rootViewController = tab_controller
 
+    # make color detail controller the home view
+    top_controller = ColorDetailController.alloc.initWithColor(UIColor.purpleColor)
+    top_controller.title = "Top Color"
+    top_nav_controller = UINavigationController.alloc.initWithRootViewController(top_controller)
+    # add the 2 tabs
+    tab_controller.viewControllers = [nav_controller, top_nav_controller]
+
     true
   end
 end
