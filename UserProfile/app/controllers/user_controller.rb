@@ -32,11 +32,29 @@ class UserController < UIViewController
 
       value = UILabel.alloc.initWithFrame(CGRectZero)
       value.text = self.user.send(prop)
+
+      # observe come from bubble wrap KVO
+      observe(self.user, prop) do |old_value, new_value|
+        value.text = new_value
+        value.sizeToFit
+      end
+
       value.sizeToFit
       value.frame = [[label.frame.origin.x + label.frame.size.width + 10, label.frame.origin.y], value.frame.size]
       self.view.addSubview(value)
     end
     # set the title to the users name
     self.title = self.user.name
+    # change the title if the name changes
+    observe(self.user, "name") do |old_value, new_value|
+      self.title = new_value
+    end
   end
+
+  # because we are observing the user we need to unload it when we leave the view
+  def viewDidUnload
+    unobserve_all
+    super
+  end
+
 end
