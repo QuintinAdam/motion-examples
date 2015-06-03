@@ -1,14 +1,8 @@
 class AppDelegate
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-    rootViewController = UIViewController.alloc.init
-    rootViewController.title = 'Boxey'
-    rootViewController.view.backgroundColor = UIColor.whiteColor
-
-    navigationController = UINavigationController.alloc.initWithRootViewController(rootViewController)
-
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = navigationController
-    @window.makeKeyAndVisible
+    @window.backgroundColor = UIColor.whiteColor
+    @window.makeKeyAndVisible # This is a special method for UIWindow that tells the system it will be the window receiving touch events and should be drawn to the screen.
 
     true
   end
