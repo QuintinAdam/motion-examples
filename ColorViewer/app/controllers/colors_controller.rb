@@ -12,5 +12,7 @@ class ColorsController < UIViewController
     @label.center = [self.view.frame.size.width / 2, self.view.frame.size.height / 2]
     @label.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin
     self.view.addSubview(@label)
+    # for the ui nav bar title
+    self.title = "Colors"
   end
 end
