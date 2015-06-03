@@ -66,6 +66,25 @@ class AppDelegate
 
     UIView.animateWithDuration(0.5,
       animations: animations_block,
-      completion: completion_block)
+      completion: completion_block
+    )
   end
+
+  def add_label_to_box(box)
+    box.subviews.each do |subview|
+      # remove all subviews from box, which handles the case where we call this method multiple times on the same view
+      subview.removeFromSuperview
+    end
+    index_of_box = @window.subviews.index(box)
+    # CGRectZero shorthand for a rectangle at the origin and no size
+    label = UILabel.alloc.initWithFrame(CGRectZero)
+    label.text = "#{index_of_box}"
+    label.textColor = UIColor.whiteColor
+    label.backgroundColor = UIColor.clearColor
+    # sizeToFit() will precisely fill the frame to fit the text, leaving no padding
+    label.sizeToFit
+    # use the center property of UIView, which is shorthand for putting the center of a view at a point
+    label.center = [box.frame.size.width / 2, box.frame.size.height / 2] box.addSubview(label)
+  end
+
 end
