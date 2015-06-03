@@ -14,6 +14,9 @@ class AppDelegate
     @window.rootViewController = @nav_controller
     @window.makeKeyAndVisible
 
+    puts 'user = App.delegate.instance_variable_get("@user")'
+    puts 'user.email = "my_new_email@host.com"'
+    puts 'user.name = "Quintin"'
     true
   end
 end
