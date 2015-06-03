@@ -10,6 +10,9 @@ class AppDelegate
     @blue_view.backgroundColor = UIColor.blueColor
     @window.addSubview(@blue_view)
 
+    # add labels to boxes for testing the index
+    add_labels_to_boxes
+
     #add button
     @add_button = UIButton.buttonWithType(UIButtonTypeSystem)
     @add_button.setTitle("Add", forState:UIControlStateNormal)
@@ -39,13 +42,21 @@ class AppDelegate
     last_view = @window.subviews[0]
     new_view.frame = CGRect.new([last_view.frame.origin.x, last_view.frame.origin.y + last_view.frame.size.height + 10], last_view.frame.size)
     @window.insertSubview(new_view, atIndex:0)
+
+    # recall index in boxes
+    add_labels_to_boxes
   end
 
   def remove_tapped
     # make sure we only deal with boxes
-    other_views = @window.subviews.reject do |view|
-      view.is_a?(UIButton)
-    end
+    # old way because we added labels we need to change the code
+    # other_views = @window.subviews.reject do |view|
+    #   view.is_a?(UIButton)
+    # end
+
+    # new
+    other_views = self.boxes
+
     # the last box created
     last_view = other_views.last
     # if there are no more boxes?
@@ -62,7 +73,11 @@ class AppDelegate
       end
     end
     # clean up view This will remove the view from its parent's subviews and be erased from the screen.
-    completion_block = lambda { |finished| last_view.removeFromSuperview }
+    completion_block = lambda do |finished|
+      last_view.removeFromSuperview
+      # update the labels after removed from views
+      add_labels_to_boxes
+    end
 
     UIView.animateWithDuration(0.5,
       animations: animations_block,
@@ -84,7 +99,22 @@ class AppDelegate
     # sizeToFit() will precisely fill the frame to fit the text, leaving no padding
     label.sizeToFit
     # use the center property of UIView, which is shorthand for putting the center of a view at a point
-    label.center = [box.frame.size.width / 2, box.frame.size.height / 2] box.addSubview(label)
+    label.center = [box.frame.size.width / 2, box.frame.size.height / 2]
+    box.addSubview(label)
   end
 
+  def boxes
+    # grab only boxes
+    @window.subviews.reject do |view|
+      view.is_a?(UIButton) or view.is_a?(UILabel)
+    end
+  end
+
+  def add_labels_to_boxes
+    # helper method to call both of the new methods.
+    # grab all the boxes go through each ad add the label
+    self.boxes.each do |box|
+      add_label_to_box(box)
+    end
+  end
 end
