@@ -1,13 +1,9 @@
 class AppDelegate
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-    rootViewController = UIViewController.alloc.init
-    rootViewController.title = 'TableFun'
-    rootViewController.view.backgroundColor = UIColor.whiteColor
-
-    navigationController = UINavigationController.alloc.initWithRootViewController(rootViewController)
-
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = navigationController
+    @alphabet_controller = AlphabetController.alloc.initWithNibName(nil, bundle:nil)
+    @window.rootViewController =
+      UINavigationController.alloc.initWithRootViewController(@alphabet_controller)
     @window.makeKeyAndVisible
 
     true
