@@ -85,27 +85,42 @@ class AppDelegate
     # if there are no more boxes?
     return unless last_view && other_views.count > 1
     # Animations revolve around the UIView.animateWithDuration:animations: group of methods (you can also use animateWithDuration:delay:options:animations:completions: if you need to fine-tune things)
-    animations_block = lambda do
-      last_view.alpha = 0
-      last_view.backgroundColor = UIColor.redColor
-      other_views.reject do |view|
-        view == last_view
-      end.each do |view|
-        new_origin = [view.frame.origin.x, view.frame.origin.y - (last_view.frame.size.height + 10)]
-        view.frame = CGRect.new(new_origin, view.frame.size)
-      end
-    end
+    # animations_block = lambda do
+    #   last_view.alpha = 0
+    #   last_view.backgroundColor = UIColor.redColor
+    #   other_views.reject do |view|
+    #     view == last_view
+    #   end.each do |view|
+    #     new_origin = [view.frame.origin.x, view.frame.origin.y - (last_view.frame.size.height + 10)]
+    #     view.frame = CGRect.new(new_origin, view.frame.size)
+    #   end
+    # end
+
     # clean up view This will remove the view from its parent's subviews and be erased from the screen.
-    completion_block = lambda do |finished|
+    # completion_block = lambda do |finished|
+    #   last_view.removeFromSuperview
+    #   # update the labels after removed from views
+    #   add_labels_to_boxes
+    # end
+
+    # UIView.animateWithDuration(0.5,
+    #   animations: animations_block,
+    #   completion: completion_block
+    # )
+
+    # sugar cube replacement of the animation
+    last_view.fade_out do |view|
       last_view.removeFromSuperview
-      # update the labels after removed from views
       add_labels_to_boxes
     end
 
-    UIView.animateWithDuration(0.5,
-      animations: animations_block,
-      completion: completion_block
-    )
+    other_views.each do |view|
+      new_origin = [
+        view.frame.origin.x,
+        view.frame.origin.y - (last_view.frame.size.height)
+      ]
+      view.move_to new_origin
+    end
   end
 
   def add_label_to_box(box)

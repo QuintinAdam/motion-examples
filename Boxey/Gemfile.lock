@@ -2,9 +2,11 @@ GEM
   remote: https://rubygems.org/
   specs:
     rake (10.4.2)
+    sugarcube (3.3.5)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   rake
+  sugarcube
