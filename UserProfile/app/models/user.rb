@@ -31,4 +31,31 @@ class User
       encoder.encodeObject(self.send(prop), forKey: prop.to_s)
     end
   end
+
+  # production app, our USER_KEY would probably be a function of the user's id,
+  USER_KEY = "user"
+
+  def save
+    defaults = NSUserDefaults.standardUserDefaults
+    defaults[USER_KEY] = NSKeyedArchiver.archivedDataWithRootObject(self)
+  end
+
+  def self.load
+    defaults = NSUserDefaults.standardUserDefaults
+    data = defaults[USER_KEY]
+    # protect against nil case
+    NSKeyedUnarchiver.unarchiveObjectWithData(data) if data
+  end
 end
+
+# defaults = NSUserDefaults.standardUserDefaults
+# defaults["some_array"] = [1,2,3]
+# defaults["some_number"] = 4
+# some_name = defaults["some_name"]
+
+# Here's what an NSCoding serialization looks like:
+# my_object = # some NSCoding-compliant object
+# defaults = NSUserDefaults.standardUserDefaults
+# defaults["some_object"] = NSKeyedArchiver.archivedDataWithRootObject(my_object)
+# my_saved_data = defaults["some_object"]
+# my_saved_object = NSKeyedUnarchiver.unarchiveObjectWithData(my_saved_data)

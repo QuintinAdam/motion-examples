@@ -7,10 +7,12 @@ class AppDelegate
     # @user.id = "123"
     # @user.name = "Clay"
     # @user.email = "clay@mail.com"
-    @user = User.new(id: "123", name: "Clay", email: "clay@mail.com", phone: "555-555-5555")
+    # lOAD user
+    @user = User.load
+    # or make new one
+    @user ||= User.new(id: "123", name: "Clay",email: "clay@mail.com", phone: "555-555-5555")
     @user_controller = UserController.alloc.initWithUser(@user)
-    @nav_controller =
-        UINavigationController.alloc.initWithRootViewController(@user_controller)
+    @nav_controller = UINavigationController.alloc.initWithRootViewController(@user_controller)
     @window.rootViewController = @nav_controller
     @window.makeKeyAndVisible
 
@@ -18,5 +20,10 @@ class AppDelegate
     puts 'user.email = "my_new_email@host.com"'
     puts 'user.name = "Quintin"'
     true
+  end
+
+  # Apple recommends we save user data after the application has entered the background (as not to accidentally freeze the interface),
+  def applicationDidEnterBackground(application)
+    @user.save
   end
 end
