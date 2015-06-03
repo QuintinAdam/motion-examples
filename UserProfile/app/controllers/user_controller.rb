@@ -14,7 +14,7 @@ class UserController < UIViewController
     self.view.backgroundColor = UIColor.whiteColor
 
     last_label = nil
-    ["id", "name", "email"].each do |prop|
+    User::PROPERTIES.each do |prop|
       label = UILabel.alloc.initWithFrame(CGRectZero)
       label.text = "#{prop.capitalize}:"
 
