@@ -1,3 +1,3 @@
 #Motion Book
 
-End of chapter 2
+End of chapter 3
