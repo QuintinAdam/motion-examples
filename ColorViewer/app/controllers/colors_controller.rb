@@ -32,6 +32,7 @@ class ColorsController < UIViewController
       button.addTarget(self, action:"tap_#{color_text}", forControlEvents:UIControlEventTouchUpInside)
       # add to view
       self.view.addSubview(button)
+    end
   end
 
   # button callbacks
