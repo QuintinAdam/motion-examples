@@ -33,4 +33,20 @@ class ColorsController < UIViewController
       # add to view
       self.view.addSubview(button)
   end
+
+  # button callbacks
+  # navigationController() is automatically set whenever we add a view controller to a navigation stack, which we did with initWithRootView
+  def tap_red
+    controller = ColorDetailController.alloc.initWithColor(UIColor.redColor)
+    self.navigationController.pushViewController(controller, animated: true)
+  end
+  def tap_green
+    controller = ColorDetailController.alloc.initWithColor(UIColor.greenColor)
+    self.navigationController.pushViewController(controller, animated: true)
+  end
+  def tap_blue
+    controller = ColorDetailController.alloc.initWithColor(UIColor.blueColor)
+    self.navigationController.pushViewController(controller, animated: true)
+  end
+
 end
