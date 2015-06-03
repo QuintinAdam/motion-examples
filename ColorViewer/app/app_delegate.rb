@@ -4,14 +4,23 @@ class AppDelegate
     @window.makeKeyAndVisible
     # UIViewController and adjust the view's frame to fit the window. This lets us write our controller without hard-coding its size, making our controller reusable to other containers
 
-    # the root view to a controller
-    # @window.rootViewController = ColorsController.alloc.initWithNibName(nil, bundle: nil)
+    # basic controller
+        # the root view to a controller
+        # @window.rootViewController = ColorsController.alloc.initWithNibName(nil, bundle: nil)
 
-    # set up the controller then pass it into a ui nav controller
+    # nav controller
+        # set up the controller then pass it into a ui nav controller
+        # controller = ColorsController.alloc.initWithNibName(nil, bundle: nil)
+        # nav_controller = UINavigationController.alloc.initWithRootViewController(controller)
+
+        # @window.rootViewController = nav_controller
+
+    # tab controller
     controller = ColorsController.alloc.initWithNibName(nil, bundle: nil)
     nav_controller = UINavigationController.alloc.initWithRootViewController(controller)
-
-    @window.rootViewController = nav_controller
+    tab_controller = UITabBarController.alloc.initWithNibName(nil, bundle: nil)
+    tab_controller.viewControllers = [nav_controller]
+    @window.rootViewController = tab_controller
 
     true
   end

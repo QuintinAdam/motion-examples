@@ -35,6 +35,14 @@ class ColorsController < UIViewController
     end
   end
 
+  # override initWithNibName:bundle: in ColorsController, and then we can create our UITabBarItem
+  def initWithNibName(name, bundle: bundle)
+    super
+    # image should be a 30x30 black and transparent icon
+    self.tabBarItem = UITabBarItem.alloc.initWithTitle("Colors", image: nil, tag: 1)
+    self
+  end
+
   # button callbacks
   # navigationController() is automatically set whenever we add a view controller to a navigation stack, which we did with initWithRootView
   def tap_red
