@@ -79,6 +79,28 @@ class AlphabetController < UIViewController
     self.sections.count
   end
 
+  # adds side quick index
+  def sectionIndexTitlesForTableView(tableView)
+    sections
+  end
+
+  # adds side quick index
+  def tableView(tableView, sectionForSectionIndexTitle: title, atIndex: index)
+    sections.index title
+  end
+
+  #deletes
+  def tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+    UITableViewCellEditingStyleDelete
+  end
+
+  def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
+    if editingStyle == UITableViewCellEditingStyleDelete
+      rows_for_section(indexPath.section).delete_at indexPath.row
+      tableView.reloadData
+    end
+  end
+
   #helpers
   # These just abstract NSIndexPath-based access to our data
   def sections
