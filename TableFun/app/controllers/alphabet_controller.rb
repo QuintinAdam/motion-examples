@@ -97,7 +97,10 @@ class AlphabetController < UIViewController
   def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
     if editingStyle == UITableViewCellEditingStyleDelete
       rows_for_section(indexPath.section).delete_at indexPath.row
-      tableView.reloadData
+      # tableView.reloadData
+      # reload reload data with a nice animation
+      # other UITableViewRowAnimations like UITableViewRowAnimationRight or UITableViewRowAnimationBottom
+      tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationFade)
     end
   end
 
