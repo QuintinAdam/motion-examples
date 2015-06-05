@@ -47,4 +47,22 @@ Motion::Project::App.setup do |app|
   # app.version = "1.0"
   # app.identifier = "com.myappcompany.myawesomeapp"
   # app.provisiong_profile = "/Users/me/profiles/1234.mobileprovision"
+
+  # build settings on a per-mode basis, you can use the development() and release() methods like so:
+  # app.development do
+    # code runs in dev mode
+    # app.version = "1.0.1"
+    # app.identifier = "com.myappcompany.myawesomeapp.dev"
+  # end
+
+  # app.release do
+    # code runs in release mode
+    # app.version = "1.0"
+  # end
+
+  # full list of options http://www.rubymotion.com/developers/guides/manuals/cocoa/project-management/
+
+  # rake archive:distribution to release
+
+  # we can use the Application Loader, which ships with Xcode to upload our app
 end
