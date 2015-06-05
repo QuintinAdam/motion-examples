@@ -5,7 +5,7 @@ class SearchController < UIViewController
     self.view.backgroundColor = UIColor.whiteColor
 
     @text_field = UITextField.alloc.initWithFrame [[0,0], [160, 26]]
-    @text_field.placeholder = "#abcabc"
+    @text_field.placeholder = "#ffffff"
     @text_field.textAlignment = UITextAlignmentCenter
     @text_field.autocapitalizationType = UITextAutocapitalizationTypeNone
     #StyleNone and StyleLine also exist
@@ -21,5 +21,22 @@ class SearchController < UIViewController
     @search.center = [self.view.frame.size.width / 2, @text_field.center.y + 40]
 
     self.view.addSubview(@search)
+
+    # when is from bubble wrap
+    # when() function is available to every UIControl (of which UIButton is a subclass) and takes the usual bitmask of UIControlEvents as its arguments
+    # While the request runs, we temporarily disable our UI elements using the enabled property of each element.
+    @search.when(UIControlEventTouchUpInside) do
+      @search.enabled = false
+      @text_field.enabled = false
+      hex = @text_field.text
+      # chop off any leading #s
+      hex = hex[1..-1] if hex[0] == "#"
+      Color.find(hex) do |color|
+        @search.enabled = true
+        @text_field.enabled = true
+      end
+    end
   end
+
 end
+

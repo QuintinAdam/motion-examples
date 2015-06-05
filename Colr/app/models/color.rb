@@ -28,4 +28,11 @@ class Color
     end
     @tags = tags
   end
+
+  def self.find(hex, &block)
+    BubbleWrap::HTTP.get("http://www.colr.org/json/color/#{hex}") do |response|
+      p response.body.to_str
+      block.call(nil)
+    end
+  end
 end
