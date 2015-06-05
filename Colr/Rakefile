@@ -28,4 +28,12 @@ Motion::Project::App.setup do |app|
 
   # If you want to grab the contents of an arbitrary file like data.txt, we need to grab its path.
   # path = NSBundle.mainBundle.pathForResource("data", ofType:"txt") data = NSData.dataWithContentsOfFile(path)
+
+  #plist
+  # app.info_plist['CFBundleURLTypes'] = [ {
+  # 'CFBundleURLName' => 'com.mycomapny.myapp',
+  # 'CFBundleURLSchemes' => ['myapp'] }
+  # ]
+
+  # more about plist https://developer.apple.com/library/mac/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009247
 end
