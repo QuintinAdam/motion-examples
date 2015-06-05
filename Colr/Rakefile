@@ -65,4 +65,7 @@ Motion::Project::App.setup do |app|
   # rake archive:distribution to release
 
   # we can use the Application Loader, which ships with Xcode to upload our app
+
+  # more
+  # book: iOS Recipes
 end
