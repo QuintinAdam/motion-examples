@@ -44,4 +44,14 @@ class Color
       end
     end
   end
+
+  def add_tag(tag, &block)
+    AFMotion::HTTP.post("http://www.colr.org/js/color/#{self.hex}/addtag/", payload:{tags: tag}) do |response|
+      if response.ok?
+        block.call(tag)
+      else
+        block.call(nil)
+      end
+    end
+  end
 end
