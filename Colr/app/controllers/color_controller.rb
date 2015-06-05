@@ -44,5 +44,12 @@ class ColorController < UIViewController
     add_button_offset = @add.frame.size.width + 2*padding
     @text_field.frame = [text_field_origin, [self.view.frame.size.width - text_field_origin[0] - add_button_offset, @color_view.frame.size.height]]
 
+    # for the table
+    table_height = self.view.bounds.size.height - @info_container.frame.size.height
+    table_frame = [[0, @info_container.frame.size.height], [self.view.bounds.size.width, table_height]]
+    @table_view =UITableView.alloc.initWithFrame(table_frame, style: UITableViewStylePlain)
+    @table_view.autoresizingMask = UIViewAutoresizingFlexibleHeight
+    self.view.addSubview(@table_view)
+    @table_view.dataSource = self
   end
 end
