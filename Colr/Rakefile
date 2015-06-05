@@ -14,9 +14,18 @@ Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'Colr'
 
+  # To include your icon files, simply add them to the resources folder
   # array of icons you want to load as your app icons
   # app.icons = ["Icon-72.png", "Icon-144.png", ...]
   # if you don't want apple to add a curve shine effect
   # app.prerendered_icon = true
   # https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/index.html
+
+  # Any files included in resources will be bundled with your app and accessible in your code
+  # For example, adding a face.png file allows us to create a UIImage instance with UIImage.imageNamed("face")
+
+  # All supported .ttf and .otf fonts in resources will be included properly in your app and allow you to use the UIFont.fontWith- Name("MyFont", size:20) method.
+
+  # If you want to grab the contents of an arbitrary file like data.txt, we need to grab its path.
+  # path = NSBundle.mainBundle.pathForResource("data", ofType:"txt") data = NSData.dataWithContentsOfFile(path)
 end
