@@ -32,9 +32,19 @@ class SearchController < UIViewController
       # chop off any leading #s
       hex = hex[1..-1] if hex[0] == "#"
       Color.find(hex) do |color|
+        if color.nil?
+          @search.setTitle("None :(", forState: UIControlStateNormal)
+        else
+          @search.setTitle("Search", forState: UIControlStateNormal)
+          self.open_color(color)
+        end
         @search.enabled = true
         @text_field.enabled = true
       end
+    end
+
+    def open_color(color)
+      p "Opening #{color.inspect}"
     end
   end
 
