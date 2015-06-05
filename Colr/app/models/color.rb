@@ -31,7 +31,7 @@ class Color
 
   def self.find(hex, &block)
     AFMotion::HTTP.get("http://www.colr.org/json/color/#{hex}") do |result|
-      p response.body.to_str
+      p result.body.to_str
       block.call(nil)
     end
   end
