@@ -31,8 +31,17 @@ class Color
 
   def self.find(hex, &block)
     AFMotion::HTTP.get("http://www.colr.org/json/color/#{hex}") do |result|
-      p result.body.to_str
-      block.call(nil)
+      result_data = BubbleWrap::JSON.parse(result.body.to_str)
+      color_data = result_data["colors"][0]
+
+      # Colr will return a color with id == -1 if no color was found
+
+      color = Color.new(color_data)
+      if color.id.to_i == -1
+        block.call(nil)
+      else
+        block.call(color)
+      end
     end
   end
 end
