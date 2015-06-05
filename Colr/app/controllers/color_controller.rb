@@ -83,4 +83,14 @@ class ColorController < UIViewController
     cell.textLabel.text = self.color.tags[indexPath.row].name
     cell
   end
+
+  def refresh
+    Color.find(self.color.hex) do |color|
+      self.color = color
+      @table_view.reloadData
+      @add.enabled = true
+      @text_field.enabled = true
+    end
+  end
+
 end
