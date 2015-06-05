@@ -1,3 +1,3 @@
 #Motion Book
 
-End of chapter 6 testing
+End of chapter 7 colr app
