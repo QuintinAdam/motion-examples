@@ -15,9 +15,14 @@ class SearchController < UIViewController
     self.view.addSubview(@text_field)
 
     @search = UIButton.buttonWithType(UIButtonTypeSystem)
-    @search.setTitle("Search", forState:UIControlStateNormal)
+    @search.setTitle("Search HEX", forState:UIControlStateNormal)
     @search.setTitle("Loading", forState:UIControlStateDisabled)
     @search.sizeToFit
+    # so the size gets adjusted when changing text
+    @search.titleLabel.numberOfLines = 1
+    @search.titleLabel.adjustsFontSizeToFitWidth = true
+    @search.titleLabel.lineBreakMode = NSLineBreakByCharWrapping
+
     @search.center = [self.view.frame.size.width / 2, @text_field.center.y + 40]
 
     self.view.addSubview(@search)
@@ -33,9 +38,9 @@ class SearchController < UIViewController
       hex = hex[1..-1] if hex[0] == "#"
       Color.find(hex) do |color|
         if color.nil?
-          @search.setTitle("None :(", forState: UIControlStateNormal)
+          @search.setTitle("No color", forState: UIControlStateNormal)
         else
-          @search.setTitle("Search", forState: UIControlStateNormal)
+          @search.setTitle("Search HEX", forState: UIControlStateNormal)
           self.open_color(color)
         end
         @search.enabled = true
@@ -44,7 +49,8 @@ class SearchController < UIViewController
     end
 
     def open_color(color)
-      p "Opening #{color.inspect}"
+      controller = ColorController.alloc.initWithColor(color)
+      self.navigationController.pushViewController(controller, animated:true)
     end
   end
 
