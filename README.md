@@ -1,3 +1,5 @@
 #Motion Book
 
-End of chapter 7 colr app
+End of chapter 8
+
+End of book!
