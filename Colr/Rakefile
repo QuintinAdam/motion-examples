@@ -36,4 +36,15 @@ Motion::Project::App.setup do |app|
   # ]
 
   # more about plist https://developer.apple.com/library/mac/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009247
+
+  # Apple usually only takes apps built against the most two most recent versions
+  # app.sdk_version = "6.0"
+  # app.deployment_target = "5.0"
+
+  # needed for deployment
+  # app.sdk_version = "6.0"
+  # app.deployment_target = "5.1"
+  # app.version = "1.0"
+  # app.identifier = "com.myappcompany.myawesomeapp"
+  # app.provisiong_profile = "/Users/me/profiles/1234.mobileprovision"
 end
