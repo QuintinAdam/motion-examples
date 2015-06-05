@@ -13,4 +13,10 @@ end
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'Colr'
+
+  # array of icons you want to load as your app icons
+  # app.icons = ["Icon-72.png", "Icon-144.png", ...]
+  # if you don't want apple to add a curve shine effect
+  # app.prerendered_icon = true
+  # https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/index.html
 end
