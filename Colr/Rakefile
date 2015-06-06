@@ -10,9 +10,37 @@ begin
 rescue LoadError
 end
 
+require './lib/app_properties'
+props = AppProperties.new
+
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'Colr'
+  # app.name = 'Colr'
+  app.name = props.name
+  # app.deployment_target = props.deployment_target
+  # app.identifier = props.identifier
+
+  app.version = props.version
+  app.short_version = props.version #required to be incremented for AppStore
+
+  # app.device_family = props.devices
+  #app.icons = props.icons
+  #app.provisioning_profile = props.provisioning
+  # app.release do
+  #   app.codesign_certificate = props.distribution_certificate
+  # end
+  # app.development do
+  #   app.codesign_certificate = props.developer_certificate
+  # end
+  # include external files
+  # app.files += props.render_files(app)
+
+  app.frameworks += props.frameworks
+  # app.prerendered_icon = props.prerendered_icon
+
+
+
+
 
   # To include your icon files, simply add them to the resources folder
   # array of icons you want to load as your app icons
