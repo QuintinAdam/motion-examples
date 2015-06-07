@@ -35,11 +35,8 @@ Motion::Project::App.setup do |app|
   # include external files
   # app.files += props.render_files(app)
 
-  app.frameworks += props.frameworks
+  # app.frameworks += props.frameworks
   # app.prerendered_icon = props.prerendered_icon
-
-
-
 
 
   # To include your icon files, simply add them to the resources folder
