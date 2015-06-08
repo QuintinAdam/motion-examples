@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project/template/ios'
+
+begin
+  require 'bundler'
+  Bundler.require
+rescue LoadError
+end
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'BitWatch'
+  app.deployment_target = '8.2'
+  app.version = '1.0'
+  app.short_version = '1.0'
+  app.identifier = "com.rubymotion.#{app.name}"
+  app.icons << 'icon.png'
+  app.target 'WatchApp', :extension
+  # app.codesign_certificate = 'XXXXXXXXXX'
+  # app.provisioning_profile = 'provisions/BitWatch.mobileprovision'
+end
