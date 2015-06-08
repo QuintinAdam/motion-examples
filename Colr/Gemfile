@@ -4,7 +4,7 @@ gem 'rake'
 # Add your dependencies here:
 gem 'bubble-wrap'
 gem 'afmotion'
-
+gem 'motion-redgreen'
 # gem "teacup"
 # gem "sugarcube"
 # gem "sweettea"

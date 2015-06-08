@@ -14,6 +14,7 @@ require './lib/app_properties'
 props = AppProperties.new
 
 Motion::Project::App.setup do |app|
+  app.redgreen_style = :progress # :full default: :focused, also can use :progress
   # Use `rake config' to see complete project settings.
   # app.name = 'Colr'
   app.name = props.name
