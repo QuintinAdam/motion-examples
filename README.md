@@ -68,6 +68,12 @@ https://pragprog.com/book/carubym/rubymotion
     - CoreData docs: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CoreData/cdProgrammingGuide.html
   - CDQ kinda like active record
   - ruby-xcdm for sachems and migrations
+  - so kewl
+- Ep6 - NSCoder, NSCoding, and NSUserDefaults
+  - Project: TodoList
+  - Resources:
+    - The Amazing Power of NSCoding Article: http://blog.motioninmotion.tv/the-amazing-power-of-nscoding/
+  - If CoreData is overkill or for small bits of data like user preferences
 
 ####Other
 
