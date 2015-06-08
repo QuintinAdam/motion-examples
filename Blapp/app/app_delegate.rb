@@ -1,24 +1,15 @@
 class AppDelegate
-
-  attr_accessor :postsModel
-
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-
-    self.postsModel = Post.new
-
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @tabController = UITabBarController.new
 
-    postsController = PostsController.new
-    postsNavigationController = UINavigationController.alloc.initWithRootViewController(postsController)
+    @postsNavController = UINavigationController.alloc.initWithRootViewController(PostsController.new)
+    @pseudonymNavController = UINavigationController.alloc.initWithRootViewController(PseudonymController.new)
 
-    createPostController = CreatePostController.new
-    
-    tabController = UITabBarController.new
-    tabController.viewControllers = [postsNavigationController, createPostController]
-    @window.rootViewController = tabController
+    @tabController.viewControllers = [@postsNavController, @pseudonymNavController]
 
+    @window.rootViewController = @tabController
     @window.makeKeyAndVisible
-
     true
   end
 end

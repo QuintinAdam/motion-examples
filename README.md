@@ -58,6 +58,16 @@ https://pragprog.com/book/carubym/rubymotion
   - Bubble wrap Location
   - https://gist.github.com/FluffyJack/8123412
   - oxs/plist gem
+- Ep4: CoreData with CDQ and ruby-xcdm
+  - Project: Blapp
+  - Resources:
+    - CDQ: https://github.com/infinitered/cdq
+    - ruby-xcdm: https://github.com/infinitered/ruby-xcdm
+    - CDQ Greenfield Quick Start: https://github.com/infinitered/cdq/wiki/Greenfield-Quick-Start
+    - CDQ Cheat Sheet: https://github.com/infinitered/cdq/wiki/CDQ-Cheat-Sheet
+    - CoreData docs: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CoreData/cdProgrammingGuide.html
+  - CDQ kinda like active record
+  - ruby-xcdm for sachems and migrations
 
 ####Other
 
