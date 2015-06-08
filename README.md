@@ -74,7 +74,10 @@ https://pragprog.com/book/carubym/rubymotion
   - Resources:
     - The Amazing Power of NSCoding Article: http://blog.motioninmotion.tv/the-amazing-power-of-nscoding/
   - If CoreData is overkill or for small bits of data like user preferences
-
+- Ep7 - Working with the Camera
+  - Project: KeyHook
+  - Resources:
+    - Camera Programming Guide for iOS: https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/CameraAndPhotoLib_TopicsForIOS/Introduction/Introduction.html
 ####Other
 
 - motiontemplate
