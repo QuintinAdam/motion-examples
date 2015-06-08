@@ -1,13 +1,22 @@
 class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    rootViewController = UIViewController.alloc.init
-    rootViewController.title = 'Blapp'
-    rootViewController.view.backgroundColor = UIColor.whiteColor
 
-    navigationController = UINavigationController.alloc.initWithRootViewController(rootViewController)
+  attr_accessor :postsModel
+
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+
+    self.postsModel = Post.new
 
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = navigationController
+
+    postsController = PostsController.new
+    postsNavigationController = UINavigationController.alloc.initWithRootViewController(postsController)
+
+    createPostController = CreatePostController.new
+    
+    tabController = UITabBarController.new
+    tabController.viewControllers = [postsNavigationController, createPostController]
+    @window.rootViewController = tabController
+
     @window.makeKeyAndVisible
 
     true
