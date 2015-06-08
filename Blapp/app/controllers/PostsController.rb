@@ -7,8 +7,16 @@ class PostsController < UITableViewController
     self.tabBarItem = UITabBarItem.alloc.initWithTitle("Posts", image:UIImage.imageNamed('Signpost'), tag:1)
 
     @postsModel = UIApplication.sharedApplication.delegate.postsModel
+    @postsModel.addObserver(self, forKeyPath:'newRecordCount', options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld), context:nil)
 
     self
+  end
+
+  def observeValueForKeyPath(keyPath, ofObject:object, change:change, context:context)
+    if keyPath == 'newRecordCount' && (change[NSKeyValueChangeNewKey] - change[NSKeyValueChangeOldKey]) > 0
+      self.tableView.reloadData
+      self.tabBarController.tabBar.items[0].badgeValue = change[NSKeyValueChangeNewKey].to_s
+    end
   end
 
   def viewDidLoad
@@ -17,6 +25,8 @@ class PostsController < UITableViewController
   end
 
   def viewDidAppear(animated)
+    self.tabBarController.tabBar.items[0].badgeValue = nil
+    @postsModel.resetNewRecordCount
     super
   end
 

@@ -1,5 +1,7 @@
 class CreatePostView < UIView
 
+  attr_accessor :delegate
+
   def initWithFrame(frame)
     super
 
@@ -20,9 +22,20 @@ class CreatePostView < UIView
     @createPostButton = UIButton.alloc.initWithFrame(CGRectMake(20, 280, 280, 50))
     @createPostButton.setTitle("Create Post", forState:UIControlStateNormal)
     @createPostButton.backgroundColor = UIColor.colorWithRed(0.51, green:0.792, blue:0.612, alpha:1)
+    @createPostButton.addTarget(self, action:'createPostButtonPressed', forControlEvents: UIControlEventTouchUpInside)
     self.addSubview(@createPostButton)
 
     self
+  end
+
+  def createPostButtonPressed
+    if self.delegate.respond_to?('createPostView:didCreatePostWithDetails')
+      self.delegate.createPostView(self, didCreatePostWithDetails:{:author => @authorField.text, :content => @contentField.text})
+    end
+    @authorField.text = ""
+    @contentField.text = "Post Content"
+    @authorField.resignFirstResponder
+    @contentField.resignFirstResponder
   end
 
   def textFieldShouldReturn(textField)
