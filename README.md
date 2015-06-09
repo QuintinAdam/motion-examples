@@ -83,8 +83,10 @@ https://pragprog.com/book/carubym/rubymotion
 - motiontemplate
   - Using motion template to start a ruby motion app
   - Sets up a project for a good example project
+  - lots of good gems and examples
 - giphymotion
   - make a giphy app
+  - api
 - Hello
   - First stupid app
 - RubyMotionSamples
