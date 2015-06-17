@@ -17,6 +17,12 @@ GEM
       activesupport (~> 3.2)
       builder (~> 3.2)
       plist (~> 3.1)
+    sugarcube (1.4.4)
+    sweettea (0.6.0)
+      rake
+      sugarcube
+      teacup
+    teacup (2.1.13)
 
 PLATFORMS
   ruby
@@ -24,3 +30,6 @@ PLATFORMS
 DEPENDENCIES
   cdq
   rake
+  sugarcube
+  sweettea
+  teacup

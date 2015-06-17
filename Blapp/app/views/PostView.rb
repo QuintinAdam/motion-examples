@@ -1,46 +1,30 @@
 class PostView < UIView
+  attr_accessor :contentView, :authorAreaLabel, :authorBioView
+
   def initWithFrame(frame, andPost:post)
     self.initWithFrame(frame)
     @post = post
-    self.configure
+
+    self.stylesheet = Teacup::Stylesheet[:main]
+    
+    layout self do
+
+      self.contentView = subview UITextView, :content_view, {
+        text: @post.content
+      }
+
+      self.authorAreaLabel = subview UILabel, :author_label, {
+        text: "About #{@post.pseudonym.name}"
+      }
+
+      self.authorBioView = subview UITextView, :author_bio, {
+        text: @post.pseudonym.bio
+      }
+
+    end
+
+    apply_constraints
+
     self
-  end
-
-  def configure
-    self.backgroundColor = UIColor.lightGrayColor
-    self.addSubview(contentView)
-    self.addSubview(authorAreaLabel)
-    self.addSubview(authorBioView)
-  end
-
-  def contentView
-    @contentView ||= UITextView.new.tap do |cv|
-      contentViewFrame = self.frame
-      contentViewFrame.size.height -= 150
-      cv.frame = contentViewFrame
-      cv.textContainerInset = UIEdgeInsetsMake(20, 20, 20, 20)
-      cv.textContainer.lineFragmentPadding = 0.0
-      cv.editable = false
-      cv.text = @post.content
-    end
-  end
-
-  def authorAreaLabel
-    @authorAreaLabel ||= UILabel.new.tap do |aal|
-      aal.frame = CGRectMake(20, self.frame.size.height - 150, self.frame.size.width - 40, 30)
-      aal.text = "About #{@post.pseudonym.name}"
-      aal.font = UIFont.boldSystemFontOfSize(15)
-    end
-  end
-
-  def authorBioView
-    @authorBioView ||= UITextView.new.tap do |abv|
-      abv.frame = CGRectMake(0, self.frame.size.height - 120, self.frame.size.width, 100)
-      abv.editable = false
-      abv.text = @post.pseudonym.bio
-      abv.textContainer.lineFragmentPadding = 0.0
-      abv.textContainerInset = UIEdgeInsetsMake(0, 20, 0, 20)
-      abv.backgroundColor = UIColor.clearColor
-    end
   end
 end

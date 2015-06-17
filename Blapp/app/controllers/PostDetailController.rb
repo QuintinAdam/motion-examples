@@ -1,5 +1,6 @@
 class PostDetailController < UIViewController
   attr_accessor :post
+  stylesheet :main
 
   def initWithPost(post)
     self.init
@@ -10,8 +11,8 @@ class PostDetailController < UIViewController
 
   def viewDidLoad
     self.navigationItem.rightBarButtonItem = editButton
-    @postView = PostView.alloc.initWithFrame(self.view.frame, andPost:self.post)
-    self.view.addSubview(@postView)
+    self.view = @postView = PostView.alloc.initWithFrame(self.view.frame, andPost:self.post)
+    layout self.view, :post_view
   end
 
   def edit
