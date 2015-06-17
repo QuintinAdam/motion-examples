@@ -4,13 +4,19 @@ class ImagesCell < UICollectionViewCell
   def rmq_build
     rmq(self).apply_style :images_cell
 
-    q = rmq(self.contentView)
-    # Add your subviews, init stuff here
-    # @foo = q.append!(UILabel, :foo)
+    rmq(self.contentView).tap do |q|
+      @image = q.append(UIImageView, :image).get
+    end
   end
 
   def prepareForReuse
     @reused = true
+  end
+
+  def update(params)
+    if url = params[:url]
+      @image.url = url
+    end
   end
 
 end

@@ -30,7 +30,7 @@ class MainController < UIViewController
 
       MotionGiphy::Client.search(query) do |response|
         if response.success?
-          images = response.data.map{|gif| gif.fixed_width_downsampled.url }
+          images = response.data.map{|gif| gif.fixed_width.url }
           puts images
           open_images_controller images if images.length > 0
         else

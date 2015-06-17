@@ -29,7 +29,7 @@ class ImagesControllerStylesheet < ApplicationStylesheet
   end
 
   def overlay_note(st)
-    st.frame = {t: 20, w: app_width, h: 18}
+    st.frame = {t: 20, w: rmq.device.width, h: 18}
     st.text = 'tap anywhere to close'
     st.text_alignment = :center
     st.color = color.white

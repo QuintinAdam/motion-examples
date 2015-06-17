@@ -1,6 +1,6 @@
 module ImagesCellStylesheet
   def cell_size
-    {w: app_width / 2, h: app_height / 5}
+    {w: rmq.device.width / 2, h: rmq.device.height / 5}
   end
 
   def images_cell(st)
