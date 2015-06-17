@@ -24,19 +24,30 @@ class MainController < UIViewController
 
     if query && (query != '')
       query = query.gsub(/\s/, '%20')
-      url = "http://api.giphy.com/v1/gifs/search?q=#{query}&api_key=dc6zaTOxFJmzC"
+      # url = "http://api.giphy.com/v1/gifs/search?q=#{query}&api_key=dc6zaTOxFJmzC"
 
       rmq.animations.start_spinner
 
-      AFMotion::HTTP.get(url) do |result|
-        if html = result.body
-          images = html.scan(/src=\"(.+?\.jpg)\"/).map do |m|
-            m.first
-          end
+      MotionGiphy::Client.search(query) do |response|
+        if response.success?
+          images = response.data.map{|gif| gif.fixed_width.url }
+          puts images
           open_images_controller images if images.length > 0
+        else
+          puts response.error.message
         end
         rmq.animations.stop_spinner
       end
+    #   AFMotion::HTTP.get(url) do |result|
+    #     puts result.body.first
+    #     if html = result.body
+    #       images = html.scan(/src=\"(.+?\.jpg)\"/).map do |m|
+    #         m.first
+    #       end
+    #       open_images_controller images if images.length > 0
+    #     end
+    #     rmq.animations.stop_spinner
+    #   end
     end
   end
 

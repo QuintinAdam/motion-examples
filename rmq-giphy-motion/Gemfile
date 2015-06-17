@@ -24,3 +24,5 @@ gem 'afmotion'
 
 # Useful tools
 #gem 'bubble-wrap'
+
+gem 'motion-giphy'

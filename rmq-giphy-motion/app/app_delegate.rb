@@ -17,4 +17,8 @@ class AppDelegate
     # So that we can do stuff like style views before the rotation begins
     rmq.device.orientation = new_orientation
   end
+
+  MotionGiphy::Configuration.configure do |config|
+    config.api_key = "dc6zaTOxFJmzC"
+  end
 end

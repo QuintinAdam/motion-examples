@@ -44,6 +44,9 @@ GEM
     molinillo (0.2.3)
     motion-cocoapods (1.7.1)
       cocoapods (>= 0.34)
+    motion-giphy (1.2.3)
+      afmotion
+      motion-cocoapods
     motion-require (0.2.0)
     motion_print (1.1.2)
     nap (0.8.0)
@@ -63,6 +66,7 @@ PLATFORMS
 DEPENDENCIES
   afmotion
   motion-cocoapods
+  motion-giphy
   motion_print
   rake
   ruby_motion_query
