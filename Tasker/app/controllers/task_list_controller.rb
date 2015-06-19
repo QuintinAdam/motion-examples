@@ -17,6 +17,9 @@ class TaskListController < UITableViewController
   def viewDidLoad
     super
 
+    # self.view.registerClass(TaskCell, forCellReuseIdentifier: "TaskCell")
+    # self.view.separatorInset = UIEdgeInsetsZero
+
     error_ptr = Pointer.new(:object)
     fetch_controller.delegate = self
     unless fetch_controller.performFetch(error_ptr)
@@ -57,6 +60,20 @@ class TaskListController < UITableViewController
     )
     cell.selectionStyle = UITableViewCellSelectionStyleNone
 
+    # cell.configure({
+    #   name: fetch_controller.objectAtIndexPath(index_path).name,
+    #   due_at: NSDateFormatter.localizedStringFromDate(
+    #     fetch_controller.objectAtIndexPath(index_path).due_at,
+    #     dateStyle: NSDateFormatterShortStyle,
+    #     timeStyle: NSDateFormatterShortStyle
+    #   ),
+    #   has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
+    #   complete: fetch_controller.objectAtIndexPath(index_path).complete
+    # })
+
+    # cell.tick_button.tag = index_path.row
+    # cell.tick_button.addTarget(self, action: 'complete_task:', forControlEvents: UIControlEventTouchUpInside)
+
     cell
   end
 
@@ -80,6 +97,24 @@ class TaskListController < UITableViewController
     self.navigationController.pushViewController(vc, animated: true)
   end
 
+  # def tableView(table_view, heightForRowAtIndexPath: index_path)
+  #   content = TaskCell.new
+
+  #   content.configure({
+  #     name: fetch_controller.objectAtIndexPath(index_path).name,
+  #     due_at: NSDateFormatter.localizedStringFromDate(
+  #       fetch_controller.objectAtIndexPath(index_path).due_at,
+  #       dateStyle: NSDateFormatterShortStyle,
+  #       timeStyle: NSDateFormatterShortStyle
+  #     ),
+  #     has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
+  #     complete: fetch_controller.objectAtIndexPath(index_path).complete
+  #   })
+  #   content.layoutIfNeeded
+
+  #   content.current_height_for_width(CGRectGetWidth(table_view.frame))
+  # end
+
   # NSFetchedResultsControllerDelegate methods
 
   def controllerWillChangeContent(controller)
@@ -94,6 +129,9 @@ class TaskListController < UITableViewController
         view.deleteRowsAtIndexPaths([index_path], withRowAnimation: UITableViewRowAnimationAutomatic)
       when NSFetchedResultsChangeUpdate
         view.reloadRowsAtIndexPaths([index_path], withRowAnimation: UITableViewRowAnimationAutomatic)
+      when NSFetchedResultsChangeMove
+        view.insertRowsAtIndexPaths([new_index_path], withRowAnimation: UITableViewRowAnimationAutomatic)
+        view.deleteRowsAtIndexPaths([index_path], withRowAnimation: UITableViewRowAnimationAutomatic)
     end
   end
 
@@ -113,6 +151,11 @@ class TaskListController < UITableViewController
 
   def refresh(sender)
     LoadTasksCommand.run
+  end
+
+  def complete_task(sender)
+    task = fetch_controller.objectAtIndexPath(NSIndexPath.indexPathForRow(sender.tag, inSection: 0))
+    CompleteTaskCommand.new(task).run
   end
 
   # Notification Handlers

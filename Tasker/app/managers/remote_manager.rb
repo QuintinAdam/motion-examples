@@ -18,6 +18,7 @@ class RemoteManager
         @manager.managedObjectStore = store
         @manager.addRequestDescriptor(task_request_descriptor)
         @manager.addResponseDescriptor(task_response_descriptor)
+        @manager.HTTPClient.setDefaultHeader('Device-ID', value: UIDevice.currentDevice.identifierForVendor.UUIDString)
       end
       @manager
     end

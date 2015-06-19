@@ -1,6 +1,6 @@
 class TextField < UITextField
   def textRectForBounds(bounds)
-    CGRectInset(bounds, 10, 10)
+    CGRectMake(bounds.origin.x + 10, bounds.origin.y, bounds.size.width - 10, bounds.size.height)
   end
 
   def placeholderRectForBounds(bounds)
