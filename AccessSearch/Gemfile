@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem 'rake'
+gem 'motion-config-vars'
+gem 'motion_print'
+# Add your dependencies here:

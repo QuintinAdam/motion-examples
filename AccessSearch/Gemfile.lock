@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    motion-config-vars (0.1.0)
+      motion-yaml (>= 1.0)
+      rake-hooks (~> 1.2.3)
+    motion-yaml (1.4)
+    motion_print (1.0.0)
+    rake (10.4.2)
+    rake-hooks (1.2.3)
+      rake
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  motion-config-vars
+  motion_print
+  rake

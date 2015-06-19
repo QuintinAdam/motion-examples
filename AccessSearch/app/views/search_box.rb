@@ -1,0 +1,3 @@
+class SearchBox
+
+end
