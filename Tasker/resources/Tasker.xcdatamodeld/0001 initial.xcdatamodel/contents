@@ -4,5 +4,6 @@
     <attribute optional="NO" syncable="YES" attributeType="String" name="name"/>
     <attribute optional="YES" syncable="YES" attributeType="String" name="note"/>
     <attribute optional="NO" syncable="YES" attributeType="Date" name="due_at"/>
+    <attribute optional="YES" syncable="YES" attributeType="Integer 32" name="task_id" defaultValueString="0"/>
   </entity>
 </model>

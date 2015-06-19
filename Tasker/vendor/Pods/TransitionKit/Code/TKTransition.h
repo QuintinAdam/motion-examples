@@ -18,6 +18,8 @@
 //  limitations under the License.
 //
 
+#import <Foundation/Foundation.h>
+
 @class TKEvent, TKState, TKStateMachine;
 
 /**
@@ -31,7 +33,7 @@
 
 /**
  Creates and returns a new transition object describing a state change occuring within a state machine in response to the firing of an event.
- 
+
  @param event The event being fired that is causing the transition to occur.
  @param sourceState The state of the machine when the event was fired.
  @param stateMachine The state machine in which the transition is occurirng.
