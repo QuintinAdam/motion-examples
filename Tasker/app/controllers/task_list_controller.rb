@@ -3,6 +3,10 @@ class TaskListController < UITableViewController
   def init
     super.tap do |c|
       c.title = "Tasks"
+      c.navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemRefresh,
+        target: self,
+        action: 'refresh:'
+      )
       c.navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd,
         target: self,
         action: 'add_task:'
@@ -67,7 +71,7 @@ class TaskListController < UITableViewController
   end
 
   def tableView(table_view, commitEditingStyle: editing_style, forRowAtIndexPath: index_path)
-    fetch_controller.objectAtIndexPath(index_path).destroy
+    DeleteTaskCommand.new(fetch_controller.objectAtIndexPath(index_path)).run
   end
 
   def tableView(table_view, didSelectRowAtIndexPath: index_path)
@@ -105,6 +109,10 @@ class TaskListController < UITableViewController
       animated: true,
       completion: nil
     )
+  end
+
+  def refresh(sender)
+    LoadTasksCommand.run
   end
 
   # Notification Handlers

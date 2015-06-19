@@ -38,16 +38,18 @@ class TaskController < UIViewController
 
   def update_task
     if self.task
-      self.task.name = self.view.name_field.text
-      self.task.note = self.view.note_field.text
-      self.task.due_at = self.view.date_picker.date
-    else
-      Task.create(
+      UpdateTaskCommand.new(
+        self.task,
         name: self.view.name_field.text,
         note: self.view.note_field.text,
         due_at: self.view.date_picker.date
-      )
+      ).run
+    else
+      AddTaskCommand.new(
+        name: self.view.name_field.text,
+        note: self.view.note_field.text,
+        due_at: self.view.date_picker.date
+      ).run
     end
-    cdq.save
   end
 end

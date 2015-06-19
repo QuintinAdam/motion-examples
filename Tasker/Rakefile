@@ -13,5 +13,10 @@ Motion::Project::App.setup do |app|
 
   app.info_plist["UIViewControllerBasedStatusBarAppearance"] = false
   app.info_plist['UIStatusBarStyle'] = 'UIStatusBarStyleLightContent'
+
+  app.pods do
+    pod 'RestKit'
+    pod 'SVProgressHUD'
+  end
 end
 task :"build:simulator" => :"schema:build"
