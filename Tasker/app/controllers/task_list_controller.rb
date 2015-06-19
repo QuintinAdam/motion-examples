@@ -17,8 +17,8 @@ class TaskListController < UITableViewController
   def viewDidLoad
     super
 
-    # self.view.registerClass(TaskCell, forCellReuseIdentifier: "TaskCell")
-    # self.view.separatorInset = UIEdgeInsetsZero
+    self.view.registerClass(TaskCell, forCellReuseIdentifier: "TaskCell")
+    self.view.separatorInset = UIEdgeInsetsZero
 
     error_ptr = Pointer.new(:object)
     fetch_controller.delegate = self
@@ -48,31 +48,21 @@ class TaskListController < UITableViewController
   def tableView(table_view, cellForRowAtIndexPath: index_path)
     @cell_id = "TaskCell"
 
-    cell = table_view.dequeueReusableCellWithIdentifier(@cell_id) || begin
-      UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier: @cell_id)
-    end
+    cell = table_view.dequeueReusableCellWithIdentifier(@cell_id)
 
-    cell.textLabel.text = fetch_controller.objectAtIndexPath(index_path).name
-    cell.detailTextLabel.text = NSDateFormatter.localizedStringFromDate(
-      fetch_controller.objectAtIndexPath(index_path).due_at,
-      dateStyle:NSDateFormatterShortStyle,
-      timeStyle:NSDateFormatterShortStyle
-    )
-    cell.selectionStyle = UITableViewCellSelectionStyleNone
+    cell.configure({
+      name: fetch_controller.objectAtIndexPath(index_path).name,
+      due_at: NSDateFormatter.localizedStringFromDate(
+        fetch_controller.objectAtIndexPath(index_path).due_at,
+        dateStyle: NSDateFormatterShortStyle,
+        timeStyle: NSDateFormatterShortStyle
+      ),
+      has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
+      complete: fetch_controller.objectAtIndexPath(index_path).complete
+    })
 
-    # cell.configure({
-    #   name: fetch_controller.objectAtIndexPath(index_path).name,
-    #   due_at: NSDateFormatter.localizedStringFromDate(
-    #     fetch_controller.objectAtIndexPath(index_path).due_at,
-    #     dateStyle: NSDateFormatterShortStyle,
-    #     timeStyle: NSDateFormatterShortStyle
-    #   ),
-    #   has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
-    #   complete: fetch_controller.objectAtIndexPath(index_path).complete
-    # })
-
-    # cell.tick_button.tag = index_path.row
-    # cell.tick_button.addTarget(self, action: 'complete_task:', forControlEvents: UIControlEventTouchUpInside)
+    cell.tick_button.tag = index_path.row
+    cell.tick_button.addTarget(self, action: 'complete_task:', forControlEvents: UIControlEventTouchUpInside)
 
     cell
   end
@@ -97,23 +87,23 @@ class TaskListController < UITableViewController
     self.navigationController.pushViewController(vc, animated: true)
   end
 
-  # def tableView(table_view, heightForRowAtIndexPath: index_path)
-  #   content = TaskCell.new
+  def tableView(table_view, heightForRowAtIndexPath: index_path)
+    content = TaskCell.new
 
-  #   content.configure({
-  #     name: fetch_controller.objectAtIndexPath(index_path).name,
-  #     due_at: NSDateFormatter.localizedStringFromDate(
-  #       fetch_controller.objectAtIndexPath(index_path).due_at,
-  #       dateStyle: NSDateFormatterShortStyle,
-  #       timeStyle: NSDateFormatterShortStyle
-  #     ),
-  #     has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
-  #     complete: fetch_controller.objectAtIndexPath(index_path).complete
-  #   })
-  #   content.layoutIfNeeded
+    content.configure({
+      name: fetch_controller.objectAtIndexPath(index_path).name,
+      due_at: NSDateFormatter.localizedStringFromDate(
+        fetch_controller.objectAtIndexPath(index_path).due_at,
+        dateStyle: NSDateFormatterShortStyle,
+        timeStyle: NSDateFormatterShortStyle
+      ),
+      has_note: fetch_controller.objectAtIndexPath(index_path).note != "",
+      complete: fetch_controller.objectAtIndexPath(index_path).complete
+    })
+    content.layoutIfNeeded
 
-  #   content.current_height_for_width(CGRectGetWidth(table_view.frame))
-  # end
+    content.current_height_for_width(CGRectGetWidth(table_view.frame))
+  end
 
   # NSFetchedResultsControllerDelegate methods
 
