@@ -19,6 +19,6 @@ class TaskListScreen < PM::TableScreen
   end
 
   def show_task(task)
-
+    open ShowTaskScreen.new({ task: task })
   end
 end
