@@ -1,7 +1,7 @@
 class AppDelegate
   def application(application, didFinishLaunchingWithOptions:launchOptions)
 
-    Demo.run_demo
+    application.applicationIconBadgeNumber = 0
 
     RemoteManager.setup
 
@@ -21,5 +21,19 @@ class AppDelegate
     LoadTasksCommand.run
 
     true
+  end
+
+  def applicationDidBecomeActive(application)
+    application.applicationIconBadgeNumber = 0
+  end
+
+  def application(application, didReceiveLocalNotification: notification)
+    if application.applicationState == UIApplicationStateActive
+      application.applicationIconBadgeNumber = 0
+      UIAlertView.new.tap { |a|
+        a.title = notification.alertBody
+        a.addButtonWithTitle('OK')
+      }.show
+    end
   end
 end

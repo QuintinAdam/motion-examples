@@ -10,6 +10,7 @@ class UpdateTaskCommand
     @task.name = @task_attributes[:name]
     @task.note = @task_attributes[:note]
     @task.due_at = @task_attributes[:due_at]
+    @task.update_alert
 
     Dispatch::Queue.concurrent(:default).async do
       RemoteManager.object_manager.patchObject(

@@ -6,6 +6,7 @@ class AddTaskCommand
   def run
     SVProgressHUD.showWithStatus('Saving task')
     task = Task.create(@task_attributes)
+    task.update_alert
     Dispatch::Queue.concurrent(:default).async do
       RemoteManager.object_manager.postObject(
         task,

@@ -48,7 +48,7 @@ class RemoteManager
     def task_request_mapping
       Dispatch.once do
         @task_request_mapping = RKObjectMapping.requestMapping
-        @task_request_mapping.addAttributeMappingsFromArray(['name', 'note', 'due_at'])
+        @task_request_mapping.addAttributeMappingsFromArray(['name', 'note', 'due_at', 'complete'])
         @task_request_mapping.addAttributeMappingsFromDictionary({'task_id' => 'id'})
       end
       @task_request_mapping
@@ -70,8 +70,7 @@ class RemoteManager
     def task_mapping
       Dispatch.once do
         @task_mapping = RKEntityMapping.mappingForEntityForName('Task', inManagedObjectStore: store)
-        @task_mapping.addAttributeMappingsFromArray(['name', 'note', 'due_at'])
-        @task_mapping.addAttributeMappingsFromArray(['name', 'note', 'due_at'])
+        @task_mapping.addAttributeMappingsFromArray(['name', 'note', 'due_at', 'complete'])
         @task_mapping.addAttributeMappingsFromDictionary({'id' => 'task_id'})
       end
       @task_mapping
