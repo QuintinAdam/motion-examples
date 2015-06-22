@@ -45,7 +45,7 @@ static id RKValueForAttributeMappingInRepresentation(RKAttributeMapping *attribu
     if ([attributeMapping.sourceKeyPath isEqualToString:RKObjectMappingNestingAttributeKeyName]) {
         return [[representation allKeys] lastObject];
     } else if (attributeMapping.sourceKeyPath == nil){
-        return representation[[NSNull null]];
+        return [representation objectForKey:[NSNull null]];
     } else {
         return [representation valueForKeyPath:attributeMapping.sourceKeyPath];
     }
@@ -71,12 +71,11 @@ static NSDictionary *RKEntityIdentificationAttributesForEntityMappingWithReprese
     __block NSError *error = nil;
 
     // If the representation is mapped with a nesting attribute, we must apply the nesting value to the representation before constructing the identification attributes
-    RKAttributeMapping *nestingAttributeMapping = [entityMapping mappingForSourceKeyPath:RKObjectMappingNestingAttributeKeyName];
+    RKAttributeMapping *nestingAttributeMapping = [[entityMapping propertyMappingsBySourceKeyPath] objectForKey:RKObjectMappingNestingAttributeKeyName];
     if (nestingAttributeMapping) {
         Class attributeClass = [entityMapping classForProperty:nestingAttributeMapping.destinationKeyPath];
         id attributeValue = nil;
-        id<RKValueTransforming> valueTransformer = nestingAttributeMapping.valueTransformer ?: entityMapping.valueTransformer;
-        [valueTransformer transformValue:[[representation allKeys] lastObject] toValue:&attributeValue ofClass:attributeClass error:&error];
+        [entityMapping.valueTransformer transformValue:[[representation allKeys] lastObject] toValue:&attributeValue ofClass:attributeClass error:&error];
         attributeMappings = RKApplyNestingAttributeValueToMappings(nestingAttributeMapping.destinationKeyPath, attributeValue, attributeMappings);
     }
     
@@ -87,10 +86,8 @@ static NSDictionary *RKEntityIdentificationAttributesForEntityMappingWithReprese
         Class attributeClass = [entityMapping classForProperty:[attribute name]];
         id sourceValue = RKValueForAttributeMappingInRepresentation(attributeMapping, representation);
         id attributeValue = nil;
-        id<RKValueTransforming> valueTransformer = attributeMapping.valueTransformer ?: entityMapping.valueTransformer;
-
-        if (sourceValue) [valueTransformer transformValue:sourceValue toValue:&attributeValue ofClass:attributeClass error:&error];
-        entityIdentifierAttributes[[attribute name]] = attributeValue ?: [NSNull null];
+        if (sourceValue) [entityMapping.valueTransformer transformValue:sourceValue toValue:&attributeValue ofClass:attributeClass error:&error];
+        [entityIdentifierAttributes setObject:attributeValue ?: [NSNull null] forKey:[attribute name]];
     }];
     
     return entityIdentifierAttributes;
@@ -129,7 +126,7 @@ static BOOL RKDeleteInvalidNewManagedObject(NSManagedObject *managedObject)
 
 @interface RKManagedObjectDeletionOperation : NSOperation
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+- (id)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 - (void)addEntityMapping:(RKEntityMapping *)entityMapping;
 @end
 
@@ -140,7 +137,7 @@ static BOOL RKDeleteInvalidNewManagedObject(NSManagedObject *managedObject)
 
 @implementation RKManagedObjectDeletionOperation
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+- (id)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
     self = [self init];
     if (self) {
@@ -161,7 +158,8 @@ static BOOL RKDeleteInvalidNewManagedObject(NSManagedObject *managedObject)
     [self.managedObjectContext performBlockAndWait:^{
         NSMutableSet *objectsToDelete = [NSMutableSet set];
         for (RKEntityMapping *entityMapping in self.entityMappings) {
-            NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[entityMapping.entity name]];
+            NSFetchRequest *fetchRequest = [NSFetchRequest alloc];
+            [fetchRequest setEntity:entityMapping.entity];
             [fetchRequest setPredicate:entityMapping.deletionPredicate];
             NSError *error = nil;
             NSArray *fetchedObjects = [self.managedObjectContext executeFetchRequest:fetchRequest error:&error];
@@ -174,8 +172,6 @@ static BOOL RKDeleteInvalidNewManagedObject(NSManagedObject *managedObject)
             [self.managedObjectContext deleteObject:managedObject];
         }
     }];
-
-    self.entityMappings = nil;
 }
 
 @end
@@ -194,7 +190,7 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
 
 @implementation RKManagedObjectMappingOperationDataSource
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext cache:(id<RKManagedObjectCaching>)managedObjectCache
+- (id)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext cache:(id<RKManagedObjectCaching>)managedObjectCache
 {
     NSParameterAssert(managedObjectContext);
 
@@ -215,15 +211,6 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (id)mappingOperation:(RKMappingOperation *)mappingOperation targetObjectForMapping:(RKObjectMapping *)mapping inRelationship:(RKRelationshipMapping *)relationship
-{
-    if (! [mapping isKindOfClass:[RKEntityMapping class]]) {
-        return [mapping.objectClass new];
-    }
-
-    return nil;
 }
 
 - (id)mappingOperation:(RKMappingOperation *)mappingOperation targetObjectForRepresentation:(NSDictionary *)representation withMapping:(RKObjectMapping *)mapping inRelationship:(RKRelationshipMapping *)relationship
@@ -251,7 +238,6 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
         NSArray *identificationAttributes = [entityMapping.identificationAttributes valueForKey:@"name"];
         id existingObjectsOfRelationship = identificationAttributes ? [mappingOperation.destinationObject valueForKeyPath:relationship.destinationKeyPath] : RKMutableCollectionValueWithObjectForKeyPath(mappingOperation.destinationObject, relationship.destinationKeyPath);
         if (existingObjectsOfRelationship && !RKObjectIsCollection(existingObjectsOfRelationship)) existingObjectsOfRelationship = @[ existingObjectsOfRelationship ];
-        NSSet *setWithNull = [NSSet setWithObject:[NSNull null]];
         for (NSManagedObject *existingObject in existingObjectsOfRelationship) {
             if (! identificationAttributes && ![existingObject isDeleted]) {
                 managedObject = existingObject;
@@ -260,7 +246,7 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
             }
             
             NSDictionary *identificationAttributeValues = [existingObject dictionaryWithValuesForKeys:identificationAttributes];
-            if ([[NSSet setWithArray:[identificationAttributeValues allValues]] isEqualToSet:setWithNull]) {
+            if ([[NSSet setWithArray:[identificationAttributeValues allValues]] isEqualToSet:[NSSet setWithObject:[NSNull null]]]) {
                 managedObject = existingObject;
                 break;
             }
@@ -283,8 +269,7 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
     }
 
     if (managedObject == nil) {
-        NSEntityDescription *localEntity = [NSEntityDescription entityForName:[entity name] inManagedObjectContext:self.managedObjectContext];
-        managedObject = [[NSManagedObject alloc] initWithEntity:localEntity insertIntoManagedObjectContext:self.managedObjectContext];
+        managedObject = [[NSManagedObject alloc] initWithEntity:entity insertIntoManagedObjectContext:self.managedObjectContext];
         [managedObject setValuesForKeysWithDictionary:entityIdentifierAttributes];        
         if (entityMapping.persistentStore) [self.managedObjectContext assignObject:managedObject toPersistentStore:entityMapping.persistentStore];
 
@@ -449,38 +434,33 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
     return YES;
 }
 
-- (BOOL)mappingOperationShouldSetUnchangedValues:(RKMappingOperation *)mappingOperation
+- (BOOL)mappingOperation:(RKMappingOperation *)mappingOperation shouldSetUnchangedValuesForObject:(id)object
 {
     // Only new objects should have a temporary ID
-    if ([mappingOperation.destinationObject isKindOfClass:[NSManagedObject class]]) {
-        return [[(NSManagedObject *)mappingOperation.destinationObject objectID] isTemporaryID];
+    if ([object isKindOfClass:[NSManagedObject class]] && [[(NSManagedObject *)object objectID] isTemporaryID]) {
+        return YES;
     }
-    
-    return [mappingOperation isNewDestinationObject];
+    else return NO;
 }
 
 - (BOOL)mappingOperationShouldSkipPropertyMapping:(RKMappingOperation *)mappingOperation
 {
-    // Use concrete mapping or original mapping if not available
-    RKMapping *checkedMapping = mappingOperation.objectMapping ?: mappingOperation.mapping;
-    
-    if (! [checkedMapping isKindOfClass:[RKEntityMapping class]]) return NO;
-    RKEntityMapping *entityMapping = (RKEntityMapping *)checkedMapping;
+    if (! [mappingOperation.mapping isKindOfClass:[RKEntityMapping class]]) return NO;
+    RKEntityMapping *entityMapping = (RKEntityMapping *)mappingOperation.mapping;
     NSString *modificationKey = [entityMapping.modificationAttribute name];
     if (! modificationKey) return NO;
     id currentValue = [mappingOperation.destinationObject valueForKey:modificationKey];
     if (! currentValue) return NO;
     if (! [currentValue respondsToSelector:@selector(compare:)]) return NO;
     
-    RKPropertyMapping *propertyMappingForModificationKey = [(RKEntityMapping *)checkedMapping mappingForDestinationKeyPath:modificationKey];
+    RKPropertyMapping *propertyMappingForModificationKey = [[(RKEntityMapping *)mappingOperation.mapping propertyMappingsByDestinationKeyPath] objectForKey:modificationKey];
     id rawValue = [[mappingOperation sourceObject] valueForKeyPath:propertyMappingForModificationKey.sourceKeyPath];
     if (! rawValue) return NO;
     Class attributeClass = [entityMapping classForProperty:propertyMappingForModificationKey.destinationKeyPath];
 
     id transformedValue = nil;
     NSError *error = nil;
-    id<RKValueTransforming> valueTransformer = propertyMappingForModificationKey.valueTransformer ?: entityMapping.valueTransformer;
-    [valueTransformer transformValue:rawValue toValue:&transformedValue ofClass:attributeClass error:&error];
+    [entityMapping.valueTransformer transformValue:rawValue toValue:&transformedValue ofClass:attributeClass error:&error];
     if (! transformedValue) return NO;
     
     if ([currentValue isKindOfClass:[NSString class]]) {
@@ -488,11 +468,6 @@ extern NSString * const RKObjectMappingNestingAttributeKeyName;
     } else {
         return [currentValue compare:transformedValue] != NSOrderedAscending;
     }
-}
-
-- (BOOL)mappingOperationShouldCollectMappingInfo:(RKMappingOperation *)mappingOperation
-{
-    return YES;
 }
 
 @end

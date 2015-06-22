@@ -27,10 +27,10 @@
 // The error domain for RestKit generated errors
 extern NSString * const RKErrorDomain;
 
-typedef NS_ENUM(NSInteger, RKRestKitError) {
+typedef enum {
     RKUnsupportedMIMETypeError                  =   1,
     RKOperationCancelledError                   =   2
-} ;
+} RKRestKitError;
 
 
 ///--------------------------------------

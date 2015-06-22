@@ -20,10 +20,6 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 ///----------------
 /// @name Functions
 ///----------------
@@ -107,7 +103,3 @@ Class RKKeyValueCodingClassFromPropertyAttributes(const char *attr);
  @return The class name for the property type encoded in the given attribute string or `@"NULL"` if the property does not have an object type (the declared property is for a primitive type).
  */
 NSString *RKPropertyTypeFromAttributeString(NSString *attributeString);
-
-#ifdef __cplusplus
-}
-#endif

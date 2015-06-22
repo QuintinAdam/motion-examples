@@ -108,13 +108,8 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
 static NSData *AFSecKeyGetData(SecKeyRef key) {
     CFDataRef data = NULL;
     
-#if defined(NS_BLOCK_ASSERTIONS)
-    SecItemExport(key, kSecFormatUnknown, kSecItemPemArmour, NULL, &data);
-#else
     OSStatus status = SecItemExport(key, kSecFormatUnknown, kSecItemPemArmour, NULL, &data);
     NSCAssert(status == errSecSuccess, @"SecItemExport error: %ld", (long int)status);
-#endif
-
     NSCParameterAssert(data);
     
     return (__bridge_transfer NSData *)data;
@@ -592,7 +587,6 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
         SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
         
         SecPolicyRef policy = SecPolicyCreateBasicX509();
-        SecTrustEvaluate(serverTrust, NULL);
         CFIndex certificateCount = SecTrustGetCertificateCount(serverTrust);
         NSMutableArray *trustChain = [NSMutableArray arrayWithCapacity:certificateCount];
         
@@ -629,8 +623,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
         switch (self.SSLPinningMode) {
             case AFSSLPinningModePublicKey: {
                 NSArray *pinnedPublicKeys = [self.class pinnedPublicKeys];
-                NSAssert([pinnedPublicKeys count] > 0, @"AFSSLPinningModePublicKey needs at least one key file in the application bundle");
-
+                
                 for (id publicKey in trustChain) {
                     for (id pinnedPublicKey in pinnedPublicKeys) {
                         if (AFSecKeyIsEqualToKey((__bridge SecKeyRef)publicKey, (__bridge SecKeyRef)pinnedPublicKey)) {
@@ -641,12 +634,10 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
                     }
                 }
                 
-                NSLog(@"Error: Unknown Public Key during Pinning operation");
                 [[challenge sender] cancelAuthenticationChallenge:challenge];
                 break;
             }
             case AFSSLPinningModeCertificate: {
-                NSAssert([[self.class pinnedCertificates] count] > 0, @"AFSSLPinningModeCertificate needs at least one certificate file in the application bundle");
                 for (id serverCertificateData in trustChain) {
                     if ([[self.class pinnedCertificates] containsObject:serverCertificateData]) {
                         NSURLCredential *credential = [NSURLCredential credentialForTrust:serverTrust];
@@ -655,7 +646,6 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
                     }
                 }
                 
-                NSLog(@"Error: Unknown Certificate during Pinning operation");
                 [[challenge sender] cancelAuthenticationChallenge:challenge];
                 break;
             }
@@ -739,19 +729,15 @@ didReceiveResponse:(NSURLResponse *)response
             while (totalNumberOfBytesWritten < length) {
                 numberOfBytesWritten = [self.outputStream write:&dataBuffer[0] maxLength:length];
                 if (numberOfBytesWritten == -1) {
-                    break;
+                    [self.connection cancel];
+                    [self performSelector:@selector(connection:didFailWithError:) withObject:self.connection withObject:self.outputStream.streamError];
+                    return;
+                } else {
+                    totalNumberOfBytesWritten += numberOfBytesWritten;
                 }
-
-                totalNumberOfBytesWritten += numberOfBytesWritten;
             }
 
             break;
-        }
-
-        if (self.outputStream.streamError) {
-            [self.connection cancel];
-            [self performSelector:@selector(connection:didFailWithError:) withObject:self.connection withObject:self.outputStream.streamError];
-            return;
         }
     }
     

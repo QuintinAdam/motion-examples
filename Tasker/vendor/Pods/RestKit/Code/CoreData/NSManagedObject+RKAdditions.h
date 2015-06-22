@@ -28,11 +28,11 @@
 
  @return YES if the object has been deleted from the persistent store, else NO.
  */
-@property (nonatomic, readonly) BOOL hasBeenDeleted;
+- (BOOL)hasBeenDeleted;
 
 /**
  * Returns YES when an object has not been saved to the managed object context yet
  */
-@property (nonatomic, readonly) BOOL isNew;
+- (BOOL)isNew;
 
 @end

@@ -31,27 +31,6 @@ NSString * const RKPropertyInspectionNameKey = @"name";
 NSString * const RKPropertyInspectionKeyValueCodingClassKey = @"keyValueCodingClass";
 NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
 
-
-@implementation RKPropertyInspectorPropertyInfo
-
-+ (instancetype)propertyInfoWithName:(NSString *)name keyValueClass:(Class)kvClass isPrimitive:(BOOL)isPrimitive
-{
-    return [[self alloc] initWithName:name keyValueClass:kvClass isPrimitive:isPrimitive];
-}
-
-- (instancetype)initWithName:(NSString *)name keyValueClass:(Class)kvClass isPrimitive:(BOOL)isPrimitive
-{
-    if (self = [super init]) {
-        _name = [name copy];
-        _keyValueCodingClass = kvClass;
-        _isPrimitive = isPrimitive;
-    }
-    return self;
-}
-
-@end
-
-
 @interface RKPropertyInspector ()
 #if OS_OBJECT_USE_OBJC
 @property (nonatomic, strong) dispatch_queue_t queue;
@@ -74,7 +53,7 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
     return sharedInspector;
 }
 
-- (instancetype)init
+- (id)init
 {
     self = [super init];
     if (self) {
@@ -98,7 +77,7 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
 {
     __block NSMutableDictionary *inspection;
     dispatch_sync(self.queue, ^{
-        inspection = (self.inspectionCache)[objectClass];
+        inspection = [self.inspectionCache objectForKey:objectClass];
     });
     if (inspection) return inspection;
     
@@ -131,11 +110,10 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
                                 }
                             }
                             
-                            RKPropertyInspectorPropertyInfo *info;
-                            info = [RKPropertyInspectorPropertyInfo propertyInfoWithName:propNameString
-                                                                           keyValueClass:aClass
-                                                                             isPrimitive:isPrimitive];
-                            inspection[propNameString] = info;
+                            NSDictionary *propertyInspection = @{ RKPropertyInspectionNameKey: propNameString,
+                                                                  RKPropertyInspectionKeyValueCodingClassKey: aClass,
+                                                                  RKPropertyInspectionIsPrimitiveKey: @(isPrimitive) };
+                            [inspection setObject:propertyInspection forKey:propNameString];
                         }
                     }
                 }
@@ -148,9 +126,8 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
         currentClass = (superclass == [NSObject class] || (nsManagedObject && superclass == nsManagedObject)) ? nil : superclass;
     }
 
-    /* dispatch_barrier_async is dangerous if we are called from +initialize */
-    dispatch_barrier_sync(self.queue, ^{
-        (self.inspectionCache)[(id<NSCopying>)objectClass] = inspection;
+    dispatch_barrier_async(self.queue, ^{
+        [self.inspectionCache setObject:inspection forKey:(id<NSCopying>)objectClass];
         RKLogDebug(@"Cached property inspection for Class '%@': %@", NSStringFromClass(objectClass), inspection);
     });
     return inspection;
@@ -159,9 +136,9 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
 - (Class)classForPropertyNamed:(NSString *)propertyName ofClass:(Class)objectClass isPrimitive:(BOOL *)isPrimitive
 {
     NSDictionary *classInspection = [self propertyInspectionForClass:objectClass];
-    RKPropertyInspectorPropertyInfo *propertyInspection = classInspection[propertyName];
-    if (isPrimitive) *isPrimitive = propertyInspection.isPrimitive;
-    return propertyInspection.keyValueCodingClass;
+    NSDictionary *propertyInspection = [classInspection objectForKey:propertyName];
+    if (isPrimitive) *isPrimitive = [[propertyInspection objectForKey:RKPropertyInspectionIsPrimitiveKey] boolValue];
+    return [propertyInspection objectForKey:RKPropertyInspectionKeyValueCodingClassKey];
 }
 
 @end
@@ -175,17 +152,10 @@ NSString * const RKPropertyInspectionIsPrimitiveKey = @"isPrimitive";
 
 - (Class)rk_classForPropertyAtKeyPath:(NSString *)keyPath isPrimitive:(BOOL *)isPrimitive
 {
-    NSRange dotRange = [keyPath rangeOfString:@"." options:NSLiteralSearch];
-    RKPropertyInspector *inspector = [RKPropertyInspector sharedInspector];
-    Class propertyClass = [self class];
-    
-    if (dotRange.length == 0) {
-        return [inspector classForPropertyNamed:keyPath ofClass:propertyClass isPrimitive:isPrimitive];
-    }
-
     NSArray *components = [keyPath componentsSeparatedByString:@"."];
+    Class propertyClass = [self class];
     for (NSString *property in components) {
-        propertyClass = [inspector classForPropertyNamed:property ofClass:propertyClass isPrimitive:isPrimitive];
+        propertyClass = [[RKPropertyInspector sharedInspector] classForPropertyNamed:property ofClass:propertyClass isPrimitive:isPrimitive];
         if (! propertyClass) break;
     }
     

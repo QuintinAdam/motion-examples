@@ -18,10 +18,6 @@
 //  limitations under the License.
 //
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #import <Foundation/Foundation.h>
 
 /**
@@ -40,7 +36,3 @@ NSDictionary *RKDictionaryByMergingDictionaryWithDictionary(NSDictionary *dict1,
  @return A new `NSDictionary` wherein any percent escape sequences in the key and values have been replaced with their literal values.
  */
 NSDictionary *RKDictionaryByReplacingPercentEscapesInEntriesFromDictionary(NSDictionary *dictionary);
-
-#ifdef __cplusplus
-}
-#endif

@@ -44,15 +44,15 @@ static NSSet *RKSetWithInvalidAttributesForEntity(NSArray *attributes, NSEntityD
 
 @implementation RKConnectionDescription
 
-- (instancetype)initWithRelationship:(NSRelationshipDescription *)relationship attributes:(NSDictionary *)attributes
+- (id)initWithRelationship:(NSRelationshipDescription *)relationship attributes:(NSDictionary *)attributes
 {
     NSParameterAssert(relationship);
     NSParameterAssert(attributes);
-    if (! [attributes count]) [NSException raise:NSInvalidArgumentException format:@"Cannot connect a relationship without at least one pair of attributes describing the connection"];
+    NSAssert([attributes count], @"Cannot connect a relationship without at least one pair of attributes describing the connection");
     NSSet *invalidSourceAttributes = RKSetWithInvalidAttributesForEntity([attributes allKeys], [relationship entity]);
-    if ([invalidSourceAttributes count]) [NSException raise:NSInvalidArgumentException format:@"Cannot connect relationship: invalid attributes given for source entity '%@': %@", [[relationship entity] name], [[invalidSourceAttributes allObjects] componentsJoinedByString:@", "]];
+    NSAssert([invalidSourceAttributes count] == 0, @"Cannot connect relationship: invalid attributes given for source entity '%@': %@", [[relationship entity] name], [[invalidSourceAttributes allObjects] componentsJoinedByString:@", "]);
     NSSet *invalidDestinationAttributes = RKSetWithInvalidAttributesForEntity([attributes allValues], [relationship destinationEntity]);
-    if ([invalidDestinationAttributes count]) [NSException raise:NSInvalidArgumentException format:@"Cannot connect relationship: invalid attributes given for destination entity '%@': %@", [[relationship destinationEntity] name], [[invalidDestinationAttributes allObjects] componentsJoinedByString:@", "]];
+    NSAssert([invalidDestinationAttributes count] == 0, @"Cannot connect relationship: invalid attributes given for destination entity '%@': %@", [[relationship destinationEntity] name], [[invalidDestinationAttributes allObjects] componentsJoinedByString:@", "]);
     
     self = [[RKForeignKeyConnectionDescription alloc] init];
     if (self) {
@@ -63,7 +63,7 @@ static NSSet *RKSetWithInvalidAttributesForEntity(NSArray *attributes, NSEntityD
     return self;
 }
 
-- (instancetype)initWithRelationship:(NSRelationshipDescription *)relationship keyPath:(NSString *)keyPath
+- (id)initWithRelationship:(NSRelationshipDescription *)relationship keyPath:(NSString *)keyPath
 {
     NSParameterAssert(relationship);
     NSParameterAssert(keyPath);
@@ -75,7 +75,7 @@ static NSSet *RKSetWithInvalidAttributesForEntity(NSArray *attributes, NSEntityD
     return self;
 }
 
-- (instancetype)init
+- (id)init
 {
     if ([self class] == [RKConnectionDescription class]) {
         @throw [NSException exceptionWithName:NSInternalInconsistencyException

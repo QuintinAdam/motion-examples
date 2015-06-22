@@ -39,8 +39,6 @@
  */
 @interface RKRouter : NSObject
 
-- (instancetype)init __attribute__((unavailable("Invoke initWithBaseURL: instead.")));
-
 ///----------------------------
 /// @name Initializing a Router
 ///----------------------------
@@ -51,7 +49,7 @@
  @param baseURL The base URL with which to initialize the receiver.
  @return The receiver, initialized with the given base URL.
  */
-- (instancetype)initWithBaseURL:(NSURL *)baseURL NS_DESIGNATED_INITIALIZER;
+- (id)initWithBaseURL:(NSURL *)baseURL;
 
 ///----------------------
 /// @name Generating URLs

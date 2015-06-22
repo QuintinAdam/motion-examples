@@ -23,7 +23,7 @@
 #import "RKMappingResult.h"
 
 #ifdef _COREDATADEFINES_H
-@protocol RKManagedObjectCaching;
+#import "RKManagedObjectCaching.h"
 #endif
 
 /**
@@ -69,10 +69,10 @@
  @param responseDescriptors An array whose elements are `RKResponseDescriptor` objects specifying object mapping configurations that may be applied to the response.
  @return The receiver, initialized with the response, data, and response descriptor objects.
  */
-- (instancetype)initWithRequest:(NSURLRequest *)request
+- (id)initWithRequest:(NSURLRequest *)request
              response:(NSHTTPURLResponse *)response
                  data:(NSData *)data
-  responseDescriptors:(NSArray *)responseDescriptors NS_DESIGNATED_INITIALIZER;
+  responseDescriptors:(NSArray *)responseDescriptors;
 
 ///-----------------------------------------------
 /// @name Accessing HTTP Request and Response Data

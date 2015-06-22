@@ -21,12 +21,9 @@
 #import "RKRelationshipMapping.h"
 #import "RKMapping.h"
 
-@interface RKPropertyMapping ()
+@interface RKRelationshipMapping ()
 @property (nonatomic, copy, readwrite) NSString *sourceKeyPath;
 @property (nonatomic, copy, readwrite) NSString *destinationKeyPath;
-@end
-
-@interface RKRelationshipMapping ()
 @property (nonatomic, strong, readwrite) RKMapping *mapping;
 @end
 
@@ -41,7 +38,7 @@
     return relationshipMapping;
 }
 
-- (instancetype)init
+- (id)init
 {
     self = [super init];
     if (self) {

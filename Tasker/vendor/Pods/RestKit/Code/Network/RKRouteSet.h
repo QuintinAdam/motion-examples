@@ -71,28 +71,28 @@
 
  @return An array containing all the routes in the receiver.
  */
-@property (nonatomic, readonly, copy) NSArray *allRoutes;
+- (NSArray *)allRoutes;
 
 /**
  Returns all named routes from the receiver in an array.
 
  @return An array containing all the named routes in the receiver.
  */
-@property (nonatomic, readonly, copy) NSArray *namedRoutes;
+- (NSArray *)namedRoutes;
 
 /**
  Returns all class routes from the receiver in an array.
 
  @return An array containing all the class routes in the receiver.
  */
-@property (nonatomic, readonly, copy) NSArray *classRoutes;
+- (NSArray *)classRoutes;
 
 /**
  Returns all relationship routes from the receiver in an array.
 
  @return An array containing all the relationship routes in the receiver.
  */
-@property (nonatomic, readonly, copy) NSArray *relationshipRoutes;
+- (NSArray *)relationshipRoutes;
 
 /**
  Retrieves a route with the given name.

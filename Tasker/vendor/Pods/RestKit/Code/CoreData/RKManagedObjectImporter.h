@@ -32,8 +32,6 @@
  */
 @interface RKManagedObjectImporter : NSObject
 
-- (instancetype)init __attribute__((unavailable("Invoke initWithManagedObjectModel:storePath: instead.")));
-
 ///-------------------------------
 /// @name Initializing an Importer
 ///-------------------------------
@@ -54,7 +52,7 @@
  @warning As this initialization code path is typical for generating seed databases, the value of
     `resetsStoreBeforeImporting` is initialized to **YES**.
  */
-- (instancetype)initWithManagedObjectModel:(NSManagedObjectModel *)managedObjectModel storePath:(NSString *)storePath NS_DESIGNATED_INITIALIZER;
+- (id)initWithManagedObjectModel:(NSManagedObjectModel *)managedObjectModel storePath:(NSString *)storePath;
 
 /**
  Initializes the receiver with a given persistent store in which to persist imported managed objects.
@@ -68,7 +66,7 @@
     managed object model are determined from the given persistent store and a new managed object context with
     the private queue concurrency type is constructed.
  */
-- (instancetype)initWithPersistentStore:(NSPersistentStore *)persistentStore NS_DESIGNATED_INITIALIZER;
+- (id)initWithPersistentStore:(NSPersistentStore *)persistentStore;
 
 /**
  A Boolean value indicating whether existing managed objects in the persistent store should

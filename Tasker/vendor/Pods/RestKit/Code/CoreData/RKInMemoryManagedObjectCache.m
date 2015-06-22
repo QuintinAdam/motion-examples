@@ -54,7 +54,7 @@ static dispatch_queue_t RKInMemoryManagedObjectCacheCallbackQueue(void)
 
 @implementation RKInMemoryManagedObjectCache
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
+- (id)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
     self = [super init];
     if (self) {
@@ -68,7 +68,7 @@ static dispatch_queue_t RKInMemoryManagedObjectCacheCallbackQueue(void)
     return self;
 }
 
-- (instancetype)init
+- (id)init
 {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                    reason:[NSString stringWithFormat:@"%@ Failed to call designated initializer. Invoke initWithManagedObjectContext: instead.",
@@ -149,9 +149,9 @@ static dispatch_queue_t RKInMemoryManagedObjectCacheCallbackQueue(void)
 {
     // Observe the parent context for changes and update the caches
     NSDictionary *userInfo = notification.userInfo;
-    NSSet *insertedObjects = userInfo[NSInsertedObjectsKey];
-    NSSet *updatedObjects = userInfo[NSUpdatedObjectsKey];
-    NSSet *deletedObjects = userInfo[NSDeletedObjectsKey];
+    NSSet *insertedObjects = [userInfo objectForKey:NSInsertedObjectsKey];
+    NSSet *updatedObjects = [userInfo objectForKey:NSUpdatedObjectsKey];
+    NSSet *deletedObjects = [userInfo objectForKey:NSDeletedObjectsKey];
     RKLogTrace(@"insertedObjects=%@, updatedObjects=%@, deletedObjects=%@", insertedObjects, updatedObjects, deletedObjects);
     
     NSMutableSet *objectsToAdd = [NSMutableSet setWithSet:insertedObjects];

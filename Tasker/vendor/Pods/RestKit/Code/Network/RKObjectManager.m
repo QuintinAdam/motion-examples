@@ -38,11 +38,8 @@
 #import "RKRouteSet.h"
 
 #ifdef _COREDATADEFINES_H
-#if __has_include("RKCoreData.h")
-#define RKCoreDataIncluded
 #import "RKManagedObjectStore.h"
 #import "RKManagedObjectRequestOperation.h"
-#endif
 #endif
 
 #if !__has_feature(objc_arc)
@@ -66,7 +63,7 @@ static RKObjectManager  *sharedManager = nil;
  @param method The method for which to select matching response descriptors.
  @return An `NSArray` object whose elements are `RKResponseDescriptor` objects matching the given path and method.
  */
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
 static NSArray *RKFilteredArrayOfResponseDescriptorsMatchingPathAndMethod(NSArray *responseDescriptors, NSString *path, RKRequestMethod method)
 {
     NSIndexSet *indexSet = [responseDescriptors indexesOfObjectsPassingTest:^BOOL(RKResponseDescriptor *responseDescriptor, NSUInteger idx, BOOL *stop) {
@@ -112,7 +109,7 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 
 @implementation RKObjectParameters
 
-- (instancetype)init
+- (id)init
 {
     self = [super init];
     if (self) {
@@ -124,26 +121,26 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 - (void)addParameters:(NSDictionary *)parameters atRootKeyPath:(NSString *)rootKeyPath inArray:(BOOL)inArray
 {
     id rootKey = rootKeyPath ?: [NSNull null];
-    id nonNestedParameters = rootKeyPath ? parameters[rootKeyPath] : parameters;
-    id value = (self.parameters)[rootKey];
+    id nonNestedParameters = rootKeyPath ? [parameters objectForKey:rootKeyPath] : parameters;
+    id value = [self.parameters objectForKey:rootKey];
     if (value) {
         if ([value isKindOfClass:[NSMutableArray class]]) {
             [value addObject:nonNestedParameters];
         } else if ([value isKindOfClass:[NSDictionary class]]) {
             NSMutableArray *mutableArray = [NSMutableArray arrayWithObjects:value, nonNestedParameters, nil];
-            (self.parameters)[rootKey] = mutableArray;
+            [self.parameters setObject:mutableArray forKey:rootKey];
         } else {
             [NSException raise:NSInvalidArgumentException format:@"Unexpected argument of type '%@': expected an NSDictionary or NSArray.", [value class]];
         }
     } else {
-        (self.parameters)[rootKey] = (inArray ? @[ nonNestedParameters ] : nonNestedParameters);
+        [self.parameters setObject:(inArray ? @[ nonNestedParameters ] : nonNestedParameters) forKey:rootKey];
     }
 }
 
 - (id)requestParameters
 {
     if ([self.parameters count] == 0) return nil;
-    id valueAtNullKey = (self.parameters)[[NSNull null]];
+    id valueAtNullKey = [self.parameters objectForKey:[NSNull null]];
     if (valueAtNullKey) {
         if ([self.parameters count] == 1) return valueAtNullKey;
 
@@ -162,7 +159,7 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 
 @property (nonatomic, readonly) NSSet *mappings;
 
-- (instancetype)initWithMapping:(RKMapping *)mapping NS_DESIGNATED_INITIALIZER;
+- (id)initWithMapping:(RKMapping *)mapping;
 
 @end
 
@@ -172,7 +169,7 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 
 @implementation RKMappingGraphVisitor
 
-- (instancetype)initWithMapping:(RKMapping *)mapping
+- (id)initWithMapping:(RKMapping *)mapping
 {
     self = [super init];
     if (self) {
@@ -213,7 +210,7 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
  @param responseDescriptors An array of `RKResponseDescriptor` objects.
  @return `YES` if the `mapping` property of any of the response descriptor objects in the given array is an instance of `RKEntityMapping`, else `NO`.
  */
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
 static BOOL RKDoesArrayOfResponseDescriptorsContainEntityMapping(NSArray *responseDescriptors)
 {
     // Visit all mappings accessible from the object graphs of all response descriptors
@@ -247,7 +244,7 @@ static BOOL RKDoesArrayOfResponseDescriptorsContainEntityMapping(NSArray *respon
 BOOL RKDoesArrayOfResponseDescriptorsContainOnlyEntityMappings(NSArray *responseDescriptors);
 BOOL RKDoesArrayOfResponseDescriptorsContainOnlyEntityMappings(NSArray *responseDescriptors)
 {
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
     // Visit all mappings accessible from the object graphs of all response descriptors
     NSMutableSet *accessibleMappings = [NSMutableSet set];
     for (RKResponseDescriptor *responseDescriptor in responseDescriptors) {
@@ -348,7 +345,7 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
 
 @implementation RKObjectManager
 
-- (instancetype)initWithHTTPClient:(AFHTTPClient *)client
+- (id)initWithHTTPClient:(AFHTTPClient *)client
 {
     self = [super init];
     if (self) {
@@ -582,7 +579,7 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
     return operation;
 }
 
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
 - (RKManagedObjectRequestOperation *)managedObjectRequestOperationWithRequest:(NSURLRequest *)request
                                                           managedObjectContext:(NSManagedObjectContext *)managedObjectContext
                                                                       success:(void (^)(RKObjectRequestOperation *operation, RKMappingResult *mappingResult))success
@@ -627,14 +624,10 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
             return operation;
         }
         path = [URL relativeString];
-        
-        routingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route },
-                             @"query": @{ @"parameters": parameters ?: @{} } };
-    } else if (parameters) {
-        routingMetadata = @{ @"query": @{ @"parameters": parameters } };
+        routingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route } };
     }
     
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
     NSArray *matchingDescriptors = RKFilteredArrayOfResponseDescriptorsMatchingPathAndMethod(self.responseDescriptors, path, method);
     BOOL containsEntityMapping = RKDoesArrayOfResponseDescriptorsContainEntityMapping(matchingDescriptors);
     BOOL isManagedObjectRequestOperation = (containsEntityMapping || [object isKindOfClass:[NSManagedObject class]]);
@@ -699,10 +692,7 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
     NSURL *URL = [self URLWithRoute:route object:object interpolatedParameters:&interpolatedParameters];
     NSAssert(URL, @"Failed to generate URL for relationship named '%@' for object: %@", relationshipName, object);
     RKObjectRequestOperation *operation = [self appropriateObjectRequestOperationWithObject:nil method:RKRequestMethodGET path:[URL relativeString] parameters:parameters];
-    
-    operation.mappingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route },
-                                   @"query": @{ @"parameters": parameters ?: @{} } };
-    
+    operation.mappingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route } };
     [operation setCompletionBlockWithSuccess:success failure:failure];
     [self enqueueObjectRequestOperation:operation];
 }
@@ -721,12 +711,10 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
     NSAssert(route.method & RKRequestMethodGET, @"Expected route named '%@' to specify a GET, but it does not", routeName);
     
     RKObjectRequestOperation *operation = [self appropriateObjectRequestOperationWithObject:nil method:RKRequestMethodGET path:[URL relativeString] parameters:parameters];
-    
-    operation.mappingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route },
-                                   @"query": @{ @"parameters": parameters ?: @{} } };
-    
+    operation.mappingMetadata = @{ @"routing": @{ @"parameters": interpolatedParameters, @"route": route } };
     [operation setCompletionBlockWithSuccess:success failure:failure];
     [self enqueueObjectRequestOperation:operation];
+
 }
 
 - (void)getObjectsAtPath:(NSString *)path
@@ -802,15 +790,10 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
 
 - (RKPaginator *)paginatorWithPathPattern:(NSString *)pathPattern
 {
-    return [self paginatorWithPathPattern:pathPattern parameters:nil];
-}
-
-- (RKPaginator *)paginatorWithPathPattern:(NSString *)pathPattern parameters:(NSDictionary *)parameters
-{
     NSAssert(self.paginationMapping, @"Cannot instantiate a paginator when `paginationMapping` is nil.");
-    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:pathPattern parameters:parameters];
-    RKPaginator *paginator = [[self.paginationMapping.objectClass alloc] initWithRequest:request paginationMapping:self.paginationMapping responseDescriptors:self.responseDescriptors];
-#ifdef RKCoreDataIncluded
+    NSMutableURLRequest *request = [self requestWithMethod:@"GET" path:pathPattern parameters:nil];
+    RKPaginator *paginator = [[RKPaginator alloc] initWithRequest:request paginationMapping:self.paginationMapping responseDescriptors:self.responseDescriptors];
+#ifdef _COREDATADEFINES_H
     paginator.managedObjectContext = self.managedObjectStore.mainQueueManagedObjectContext;
     paginator.managedObjectCache = self.managedObjectStore.managedObjectCache;
     paginator.fetchRequestBlocks = self.fetchRequestBlocks;
@@ -882,7 +865,7 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
 
 #pragma mark - Fetch Request Blocks
 
-#ifdef RKCoreDataIncluded
+#ifdef _COREDATADEFINES_H
 
 - (NSArray *)fetchRequestBlocks
 {

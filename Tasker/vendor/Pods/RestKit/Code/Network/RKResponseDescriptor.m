@@ -63,7 +63,6 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 @property (nonatomic, strong, readwrite) RKMapping *mapping;
 @property (nonatomic, assign, readwrite) RKRequestMethod method;
 @property (nonatomic, copy, readwrite) NSString *pathPattern;
-@property (nonatomic, strong, readwrite) RKPathMatcher *pathPatternMatcher;
 @property (nonatomic, copy, readwrite) NSString *keyPath;
 @property (nonatomic, copy, readwrite) NSIndexSet *statusCodes;
 @end
@@ -98,16 +97,6 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
     return mappingDescriptor;
 }
 
-- (void)setPathPattern:(NSString *)pathPattern
-{
-    _pathPattern = pathPattern;
-    if (pathPattern) {
-        self.pathPatternMatcher = [RKPathMatcher pathMatcherWithPattern:pathPattern];
-    } else {
-        self.pathPatternMatcher = nil;
-    }
-}
-
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p method=%@ pathPattern=%@ keyPath=%@ statusCodes=%@ : %@>",
@@ -116,63 +105,38 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
 
 - (BOOL)matchesPath:(NSString *)path
 {
-    return [self matchesPath:path parsedArguments:nil];
-}
-
-- (BOOL)matchesPath:(NSString *)path parsedArguments:(NSDictionary **)outParsedArguments
-{
     if (!self.pathPattern || !path) return YES;
     RKPathMatcher *pathMatcher = [RKPathMatcher pathMatcherWithPattern:self.pathPattern];
-    return [pathMatcher matchesPath:path tokenizeQueryStrings:NO parsedArguments:outParsedArguments];
+    return [pathMatcher matchesPath:path tokenizeQueryStrings:NO parsedArguments:nil];
 }
 
 - (BOOL)matchesURL:(NSURL *)URL
 {
-    return [self matchesURL:URL parsedArguments:nil];
-}
-
-- (BOOL)matchesURL:(NSURL *)URL parsedArguments:(NSDictionary **)outParsedArguments
-{
     NSString *pathAndQueryString = RKPathAndQueryStringFromURLRelativeToURL(URL, self.baseURL);
     if (self.baseURL) {
         if (! RKURLIsRelativeToURL(URL, self.baseURL)) return NO;
-        return [self matchesPath:pathAndQueryString parsedArguments:outParsedArguments];
+        return [self matchesPath:pathAndQueryString];
     } else {
-        return [self matchesPath:pathAndQueryString parsedArguments:outParsedArguments];
+        return [self matchesPath:pathAndQueryString];
     }
 }
 
 - (BOOL)matchesResponse:(NSHTTPURLResponse *)response
 {
-    return [self matchesResponse:response parsedArguments:nil];
-}
+    if (! [self matchesURL:response.URL]) return NO;
 
-- (BOOL)matchesResponse:(NSHTTPURLResponse *)response parsedArguments:(NSDictionary **)outParsedArguments
-{
-    if (![self matchesURL:response.URL parsedArguments:outParsedArguments]) return NO;
-    
     if (self.statusCodes) {
         if (! [self.statusCodes containsIndex:response.statusCode]) {
             return NO;
         }
     }
+
     return YES;
 }
 
 - (BOOL)matchesMethod:(RKRequestMethod)method
 {
     return self.method & method;
-}
-
-- (NSDictionary *)parsedArgumentsFromResponse:(NSHTTPURLResponse *)response
-{
-    NSDictionary *parsedArguments = nil;
-    if ([self matchesResponse:response parsedArguments:&parsedArguments])
-    {
-        return parsedArguments;
-    }
-    
-    return nil;
 }
 
 - (BOOL)isEqual:(id)object
@@ -203,8 +167,8 @@ extern NSString *RKStringDescribingRequestMethod(RKRequestMethod method);
     return
     [self.mapping isEqualToMapping:otherDescriptor.mapping] &&
     self.method == otherDescriptor.method &&
-    ((self.pathPattern == otherDescriptor.pathPattern) || [self.pathPattern isEqualToString:otherDescriptor.pathPattern]) &&
-    ((self.keyPath == otherDescriptor.keyPath) || [self.keyPath isEqualToString:otherDescriptor.keyPath]) &&
+    [self.pathPattern isEqualToString:otherDescriptor.pathPattern] &&
+    [self.keyPath isEqualToString:otherDescriptor.keyPath] &&
     [self.statusCodes isEqualToIndexSet:otherDescriptor.statusCodes];
 }
 

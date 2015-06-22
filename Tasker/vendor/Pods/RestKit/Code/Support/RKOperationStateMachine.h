@@ -34,8 +34,6 @@
  */
 @interface RKOperationStateMachine : NSObject
 
-- (instancetype)init __attribute__((unavailable("Invoke initWithOperation: instead.")));
-
 ///-----------------------------------
 /// @name Initializing a State Machine
 ///-----------------------------------
@@ -47,7 +45,7 @@
  @param dispatchQueue The dispatch queue on which the operation executes concurrently.
  @return The receiver, initialized with the given operation and queue.
  */
-- (instancetype)initWithOperation:(NSOperation *)operation dispatchQueue:(dispatch_queue_t)dispatchQueue NS_DESIGNATED_INITIALIZER;
+- (id)initWithOperation:(NSOperation *)operation dispatchQueue:(dispatch_queue_t)dispatchQueue;
 
 ///-----------------------
 /// @name Inspecting State
@@ -58,28 +56,28 @@
 
  @return `YES` if the receiver is ready to be started, else `NO`.
  */
-@property (nonatomic, getter=isReady, readonly) BOOL ready;
+- (BOOL)isReady;
 
 /**
  Returns a Boolean value that indicates if the receiver is executing.
 
  @return `YES` if the receiver is executing, else `NO`.
  */
-@property (nonatomic, getter=isExecuting, readonly) BOOL executing;
+- (BOOL)isExecuting;
 
 /**
  Returns a Boolean value that indicates if the receiver has been cancelled.
 
  @return `YES` if the receiver has been cancelled, else `NO`.
  */
-@property (nonatomic, getter=isCancelled, readonly) BOOL cancelled;
+- (BOOL)isCancelled;
 
 /**
  Returns a Boolean value that indicates if the receiver has finished executing.
 
  @return `YES` if the receiver is finished, else `NO`.
  */
-@property (nonatomic, getter=isFinished, readonly) BOOL finished;
+- (BOOL)isFinished;
 
 ///--------------------
 /// @name Firing Events

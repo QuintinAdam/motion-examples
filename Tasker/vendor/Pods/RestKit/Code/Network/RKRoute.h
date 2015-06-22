@@ -122,20 +122,20 @@
 
  @return YES if the receiver is a named route, else NO.
  */
-@property (nonatomic, getter=isNamedRoute, readonly) BOOL namedRoute;
+- (BOOL)isNamedRoute;
 
 /**
  Determines if the receiver is a class route.
 
  @return YES if the receiver is a class route, else NO.
  */
-@property (nonatomic, getter=isClassRoute, readonly) BOOL classRoute;
+- (BOOL)isClassRoute;
 
 /**
  Determines if the receiver is a relationship route.
 
  @return YES if the receiver is a relationship route, else NO.
  */
-@property (nonatomic, getter=isRelationshipRoute, readonly) BOOL relationshipRoute;
+- (BOOL)isRelationshipRoute;
 
 @end

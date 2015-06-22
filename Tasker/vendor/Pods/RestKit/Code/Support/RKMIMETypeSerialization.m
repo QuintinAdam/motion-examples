@@ -34,13 +34,13 @@
 @property (nonatomic, strong) id MIMETypeStringOrRegularExpression;
 @property (nonatomic, assign) Class<RKSerialization> serializationClass;
 
-- (instancetype)initWithMIMEType:(id)MIMETypeStringOrRegularExpression serializationClass:(Class<RKSerialization>)serializationClass NS_DESIGNATED_INITIALIZER;
+- (id)initWithMIMEType:(id)MIMETypeStringOrRegularExpression serializationClass:(Class<RKSerialization>)serializationClass;
 - (BOOL)matchesMIMEType:(NSString *)MIMEType;
 @end
 
 @implementation RKMIMETypeSerializationRegistration
 
-- (instancetype)initWithMIMEType:(id)MIMETypeStringOrRegularExpression serializationClass:(Class<RKSerialization>)serializationClass
+- (id)initWithMIMEType:(id)MIMETypeStringOrRegularExpression serializationClass:(Class<RKSerialization>)serializationClass
 {
     NSParameterAssert(MIMETypeStringOrRegularExpression);
     NSParameterAssert(serializationClass);
@@ -91,7 +91,7 @@
 
 }
 
-- (instancetype)init
+- (id)init
 {
     self = [super init];
     if (self) {
