@@ -1,3 +1,8 @@
 class ShowTaskScreen < PM::Screen
-  title "Show Task"
+
+  attr_accessor :task
+
+  def on_load
+    self.title = task.title
+  end
 end
