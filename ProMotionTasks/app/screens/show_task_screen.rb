@@ -7,5 +7,11 @@ class ShowTaskScreen < PM::Screen
     # set rootview
     @layout = TaskLayout.new(root: self.view)
     @layout.build
+    @layout.get(:notes).text = task.notes
+  end
+
+  def updateViewConstraints
+    @layout.add_top_layout_guide_constraint(self)
+    super
   end
 end
