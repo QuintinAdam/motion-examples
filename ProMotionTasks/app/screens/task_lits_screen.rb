@@ -1,4 +1,7 @@
 class TaskListScreen < PM::TableScreen
+
+  title "Tasks"
+
   def table_data
     [
       {
