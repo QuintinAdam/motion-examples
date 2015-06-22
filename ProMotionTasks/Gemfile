@@ -4,4 +4,4 @@ gem 'rake'
 # Add your dependencies here:
 gem 'ProMotion'
 gem 'motion-kit'
-gem 'sugarcube', require: ['sugarecube-constants', 'sugarcube-color']
+gem 'sugarcube', require: ['sugarcube-constants', 'sugarcube-color']
