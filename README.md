@@ -87,7 +87,5 @@ https://pragprog.com/book/carubym/rubymotion
 - giphymotion
   - make a giphy app
   - api
-- Hello
-  - First stupid app
 - RubyMotionSamples
   - A Collection of ruby motion app for ios osx and android to experimental with
